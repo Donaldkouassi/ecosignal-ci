@@ -32,7 +32,7 @@ React (frontend)
 Laravel REST API + Sanctum
       |
       v
-MySQL en production / SQLite en mémoire pour les tests
+PostgreSQL sur Render / SQLite en mémoire pour les tests
 ```
 
 Le frontend est organisé en `pages`, `components` et `services`. Le backend sépare les contrôleurs, les Form Requests, les modèles, les middlewares, les migrations et les tests.
@@ -128,3 +128,79 @@ npm test -- --watchAll=false
 ## Documentation
 
 Le dossier `docs` contient le rapport technique détaillant la conception, les choix techniques, le modèle de données et la stratégie de tests.
+
+## Déploiement sur Render
+
+### 1. Base PostgreSQL
+
+Créer une base **Render Postgres**. Conserver ses identifiants dans les variables
+d’environnement Render uniquement : aucune valeur secrète ne doit être ajoutée au
+dépôt.
+
+### 2. Backend Laravel
+
+Créer un **Web Service** Render depuis ce dépôt avec les réglages suivants :
+
+- environnement : `Docker` ;
+- Root Directory : laisser vide (racine du dépôt) ;
+- Dockerfile Path : `./Dockerfile`.
+
+Associer la base PostgreSQL au service et définir les variables d’environnement :
+
+```env
+APP_NAME=EcoSignal CI
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=<clé générée localement avec php artisan key:generate --show>
+APP_URL=<URL publique réelle du backend>
+FRONTEND_URL=<URL publique réelle du frontend>
+DB_CONNECTION=pgsql
+DATABASE_URL=<Internal Database URL fournie par Render>
+DB_SSLMODE=require
+LOG_CHANNEL=stderr
+LOG_LEVEL=warning
+```
+
+`DATABASE_URL` suffit pour fournir à Laravel l’hôte, le port, le nom de base,
+l’utilisateur et le mot de passe. Si l’intégration choisie expose plutôt des
+variables séparées, définir `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` et
+`DB_PASSWORD` avec les valeurs fournies par Render, sans les enregistrer dans un
+fichier versionné.
+
+Le conteneur écoute automatiquement le `PORT` fourni par Render. À chaque
+démarrage, il prépare les répertoires Laravel, met la configuration en cache et
+exécute uniquement les migrations en attente avec `php artisan migrate --force`.
+Il n’exécute ni `migrate:fresh` ni les seeders.
+
+Après le premier déploiement, vérifier au minimum l’URL publique de l’API et les
+logs de migration du service.
+
+### 3. Frontend React
+
+Créer un **Static Site** Render depuis le même dépôt :
+
+- Root Directory : `frontend` ;
+- Build Command : `npm ci && npm run build` ;
+- Publish Directory : `build`.
+
+Ajouter la variable d’environnement de build suivante avec l’URL publique réelle
+du backend, suffixée par `/api` :
+
+```env
+REACT_APP_API_URL=<URL publique réelle du backend>/api
+```
+
+Le code du frontend utilise `REACT_APP_API_URL` dans
+`frontend/src/services/api.js`. Aucune URL Render fictive n’est enregistrée dans
+le dépôt.
+
+Dans **Redirects/Rewrites**, ajouter une règle de type `Rewrite` :
+
+```text
+Source:      /*
+Destination: /index.html
+Action:      Rewrite
+```
+
+Cette réécriture permet aux routes côté client React de fonctionner lors d’un
+accès direct ou d’un rafraîchissement de page.
