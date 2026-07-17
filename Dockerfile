@@ -9,6 +9,7 @@ RUN apt-get update \
         gettext-base \
         libcurl4-openssl-dev \
         libicu-dev \
+        libonig-dev \
         libpq-dev \
         libxml2-dev \
         libzip-dev \
