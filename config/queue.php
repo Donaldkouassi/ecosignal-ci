@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Queue Connection Name
+    | Nom de la connexion de file d’attente par défaut
     |--------------------------------------------------------------------------
     |
-    | Laravel's queue API supports an assortment of back-ends via a single
-    | API, giving you convenient access to each back-end using the same
-    | syntax for every one. Here you may define a default connection.
+    | L’API de files d’attente Laravel prend en charge plusieurs systèmes
+    | avec une interface unique et une syntaxe commune. Vous pouvez définir
+    | ici la connexion utilisée par défaut.
     |
     */
 
@@ -17,14 +17,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Queue Connections
+    | Connexions aux files d’attente
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the connection information for each server that
-    | is used by your application. A default configuration has been added
-    | for each back-end shipped with Laravel. You are free to add more.
+    | Configurez ici les informations de connexion de chaque serveur utilisé
+    | par l’application. Une configuration par défaut est fournie pour chaque
+    | système inclus avec Laravel et d’autres peuvent être ajoutées.
     |
-    | Drivers: "sync", "database", "beanstalkd", "sqs", "redis", "null"
+    | Pilotes : « sync », « database », « beanstalkd », « sqs », « redis », « null »
     |
     */
 
@@ -75,12 +75,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Job Batching
+    | Traitement des tâches par lots
     |--------------------------------------------------------------------------
     |
-    | The following options configure the database and table that store job
-    | batching information. These options can be updated to any database
-    | connection and table which has been defined by your application.
+    | Les options suivantes configurent la base et la table qui stockent les
+    | informations des lots de tâches. Elles peuvent cibler toute connexion
+    | et toute table définies dans l’application.
     |
     */
 
@@ -91,12 +91,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Failed Queue Jobs
+    | Tâches de file d’attente échouées
     |--------------------------------------------------------------------------
     |
-    | These options configure the behavior of failed queue job logging so you
-    | can control which database and table are used to store the jobs that
-    | have failed. You may change them to any database / table you wish.
+    | Ces options configurent la journalisation des tâches échouées et
+    | déterminent la base et la table utilisées pour les conserver.
     |
     */
 

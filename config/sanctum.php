@@ -6,12 +6,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Stateful Domains
+    | Domaines avec état
     |--------------------------------------------------------------------------
     |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
+    | Les requêtes provenant de ces domaines reçoivent des cookies
+    | d’authentification avec état. Incluez les domaines locaux et de
+    | production utilisés par l’application monopage.
     |
     */
 
@@ -23,13 +23,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sanctum Guards
+    | Gardes Sanctum
     |--------------------------------------------------------------------------
     |
-    | This array contains the authentication guards that will be checked when
-    | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
+    | Ce tableau contient les gardes vérifiés par Sanctum. Si aucun ne peut
+    | authentifier la requête, Sanctum utilise le jeton porteur reçu.
     |
     */
 
@@ -37,12 +35,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Expiration Minutes
+    | Délai d’expiration en minutes
     |--------------------------------------------------------------------------
     |
-    | This value controls the number of minutes until an issued token will be
-    | considered expired. This will override any values set in the token's
-    | "expires_at" attribute, but first-party sessions are not affected.
+    | Cette valeur détermine après combien de minutes un jeton expire. Elle
+    | remplace l’attribut « expires_at », sans affecter les sessions internes.
     |
     */
 
@@ -50,14 +47,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Token Prefix
+    | Préfixe des jetons
     |--------------------------------------------------------------------------
     |
-    | Sanctum can prefix new tokens in order to take advantage of numerous
-    | security scanning initiatives maintained by open source platforms
-    | that notify developers if they commit tokens into repositories.
+    | Sanctum peut préfixer les nouveaux jetons pour faciliter leur détection
+    | par les outils de sécurité lorsqu’ils sont publiés accidentellement.
     |
-    | See: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
+    | Voir : https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
     |
     */
 
@@ -65,12 +61,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sanctum Middleware
+    | Middlewares Sanctum
     |--------------------------------------------------------------------------
     |
-    | When authenticating your first-party SPA with Sanctum you may need to
-    | customize some of the middleware Sanctum uses while processing the
-    | request. You may change the middleware listed below as required.
+    | L’authentification d’une application monopage interne peut nécessiter
+    | l’adaptation des middlewares utilisés par Sanctum.
     |
     */
 

@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | View Storage Paths
+    | Emplacements de stockage des vues
     |--------------------------------------------------------------------------
     |
-    | Most templating systems load templates from disk. Here you may specify
-    | an array of paths that should be checked for your views. Of course
-    | the usual Laravel view path has already been registered for you.
+    | La plupart des moteurs de modèles chargent les vues depuis le disque.
+    | Indiquez ici les chemins dans lesquels les vues doivent être recherchées.
+    | Le chemin habituel de Laravel est déjà enregistré.
     |
     */
 
@@ -19,12 +19,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Compiled View Path
+    | Emplacement des vues compilées
     |--------------------------------------------------------------------------
     |
-    | This option determines where all the compiled Blade templates will be
-    | stored for your application. Typically, this is within the storage
-    | directory. However, as usual, you are free to change this value.
+    | Cette option détermine où sont stockés les modèles Blade compilés.
+    | Ils se trouvent généralement dans le dossier de stockage, mais cette
+    | valeur peut être modifiée.
     |
     */
 

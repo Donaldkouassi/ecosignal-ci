@@ -9,12 +9,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Log Channel
+    | Canal de journalisation par défaut
     |--------------------------------------------------------------------------
     |
-    | This option defines the default log channel that gets used when writing
-    | messages to the logs. The name specified in this option should match
-    | one of the channels defined in the "channels" configuration array.
+    | Cette option définit le canal utilisé par défaut pour écrire les
+    | messages dans les journaux. Son nom doit correspondre à un canal
+    | défini dans le tableau de configuration « channels ».
     |
     */
 
@@ -22,12 +22,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Deprecations Log Channel
+    | Canal de journalisation des dépréciations
     |--------------------------------------------------------------------------
     |
-    | This option controls the log channel that should be used to log warnings
-    | regarding deprecated PHP and library features. This allows you to get
-    | your application ready for upcoming major versions of dependencies.
+    | Cette option définit le canal qui enregistre les avertissements liés
+    | aux fonctionnalités PHP ou bibliothèques dépréciées afin de préparer
+    | l’application aux futures versions majeures.
     |
     */
 
@@ -38,14 +38,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Log Channels
+    | Canaux de journalisation
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the log channels for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
+    | Configurez ici les canaux de journalisation. Laravel utilise Monolog,
+    | qui propose plusieurs gestionnaires et formateurs performants.
     |
-    | Available Drivers: "single", "daily", "slack", "syslog",
+    | Pilotes disponibles : "single", "daily", "slack", "syslog",
     |                    "errorlog", "monolog",
     |                    "custom", "stack"
     |

@@ -11,7 +11,7 @@ return new class extends Migration
         if (!Schema::hasTable('collectes')) {
             Schema::create('collectes', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('signalement_id')->constrained()->onDelete('cascade');
+                $table->foreignId('signalement_id')->unique()->constrained()->onDelete('cascade');
                 $table->date('date_passage');
                 $table->string('equipe_assignee');
                 $table->enum('statut', ['planifiee', 'terminee'])->default('planifiee');

@@ -4,12 +4,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Defaults
+    | Valeurs d’authentification par défaut
     |--------------------------------------------------------------------------
     |
-    | This option controls the default authentication "guard" and password
-    | reset options for your application. You may change these defaults
-    | as required, but they're a perfect start for most applications.
+    | Cette option définit le garde d’authentification et la configuration
+    | de réinitialisation des mots de passe utilisés par défaut.
     |
     */
 
@@ -20,18 +19,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Guards
+    | Gardes d’authentification
     |--------------------------------------------------------------------------
     |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | here which uses session storage and the Eloquent user provider.
+    | Définissez ici les gardes d’authentification de l’application. La
+    | configuration fournie utilise les sessions et le fournisseur Eloquent.
     |
-    | All authentication drivers have a user provider. This defines how the
-    | users are actually retrieved out of your database or other storage
-    | mechanisms used by this application to persist your user's data.
+    | Chaque pilote utilise un fournisseur qui détermine comment les
+    | utilisateurs sont récupérés depuis la base ou un autre stockage.
     |
-    | Supported: "session"
+    | Pris en charge : « session »
     |
     */
 
@@ -44,18 +41,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | Fournisseurs d’utilisateurs
     |--------------------------------------------------------------------------
     |
-    | All authentication drivers have a user provider. This defines how the
-    | users are actually retrieved out of your database or other storage
-    | mechanisms used by this application to persist your user's data.
+    | Chaque pilote d’authentification utilise un fournisseur qui détermine
+    | comment les utilisateurs sont récupérés depuis le stockage.
     |
-    | If you have multiple user tables or models you may configure multiple
-    | sources which represent each model / table. These sources may then
-    | be assigned to any extra authentication guards you have defined.
+    | Si plusieurs tables ou modèles d’utilisateurs existent, configurez
+    | plusieurs sources et associez-les aux gardes correspondants.
     |
-    | Supported: "database", "eloquent"
+    | Pris en charge : « database », « eloquent »
     |
     */
 
@@ -73,20 +68,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Resetting Passwords
+    | Réinitialisation des mots de passe
     |--------------------------------------------------------------------------
     |
-    | You may specify multiple password reset configurations if you have more
-    | than one user table or model in the application and you want to have
-    | separate password reset settings based on the specific user types.
+    | Plusieurs configurations peuvent être définies lorsque l’application
+    | possède différents types ou modèles d’utilisateurs.
     |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
+    | La durée d’expiration correspond au nombre de minutes pendant lesquelles
+    | un jeton reste valide. Une durée courte réduit les risques de devinette.
     |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
+    | La limitation indique le délai en secondes avant de pouvoir générer un
+    | nouveau jeton et empêche la création massive de jetons.
     |
     */
 
@@ -101,12 +93,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
+    | Délai de confirmation du mot de passe
     |--------------------------------------------------------------------------
     |
-    | Here you may define the amount of seconds before a password confirmation
-    | times out and the user is prompted to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
+    | Définissez ici le nombre de secondes avant l’expiration d’une confirmation
+    | et la nouvelle saisie du mot de passe. Le délai par défaut est de trois heures.
     |
     */
 

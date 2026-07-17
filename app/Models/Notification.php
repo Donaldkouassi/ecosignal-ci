@@ -16,6 +16,10 @@ class Notification extends Model
         'lue',
     ];
 
+    protected $casts = [
+        'lue' => 'boolean',
+    ];
+
     // Relation
     public function user()
     {

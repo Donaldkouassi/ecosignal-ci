@@ -2,39 +2,52 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Signalement;
 use App\Models\Collecte;
 use App\Models\Conseil;
 use App\Models\Notification;
+use App\Models\Signalement;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Créer un admin
-        User::create([
-            'nom' => 'Admin',
-            'prenom' => 'Eco',
-            'email' => 'admin@ecosignal.ci',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@ecosignal.ci'],
+            [
+                'nom' => 'Administration',
+                'prenom' => 'EcoSignal',
+                'password' => Hash::make('password123'),
+                'role' => 'admin',
+            ]
+        );
+
+        $citoyen = User::firstOrCreate(
+            ['email' => 'citoyen@ecosignal.ci'],
+            [
+                'nom' => 'Kouassi',
+                'prenom' => 'Citoyen',
+                'password' => Hash::make('password123'),
+                'role' => 'citoyen',
+            ]
+        );
+
+        User::factory()->count(5)->create();
+
+        $signalements = Signalement::factory()
+            ->count(8)
+            ->create(['user_id' => $citoyen->id]);
+
+        Collecte::factory()->create([
+            'signalement_id' => $signalements->first()->id,
+            'statut' => 'planifiee',
         ]);
 
-        // Créer 10 citoyens
-        User::factory(10)->create();
+        Notification::factory()->count(3)->create(['user_id' => $citoyen->id]);
+        Conseil::factory()->count(5)->create();
 
-        // Créer 20 signalements
-        Signalement::factory(20)->create();
-
-        // Créer 5 collectes (liées à des signalements existants)
-        Collecte::factory(5)->create();
-
-        // Créer 10 conseils
-        Conseil::factory(10)->create();
-
-        // Créer 15 notifications
-        Notification::factory(15)->create();
+        $this->call(ConseilSeeder::class);
     }
 }

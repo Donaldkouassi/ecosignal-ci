@@ -3,60 +3,72 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Collecte\StoreCollecteRequest;
+use App\Http\Requests\Collecte\UpdateCollecteRequest;
 use App\Models\Collecte;
 use App\Models\Notification;
 use App\Models\Signalement;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class CollecteController extends Controller
 {
-    // Liste des collectes
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(Collecte::with('signalement')->paginate(10));
+        return response()->json(
+            Collecte::with('signalement.user:id,nom,prenom,email')
+                ->latest('date_passage')
+                ->paginate(10)
+        );
     }
 
-    // Créer une collecte
-    public function store(Request $request)
+    public function store(StoreCollecteRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'signalement_id' => 'required|exists:signalements,id',
-            'date_passage' => 'required|date',
-            'equipe_assignee' => 'required|string',
-        ]);
+        $collecte = DB::transaction(function () use ($request) {
+            $collecte = Collecte::create($request->validated());
+            $signalement = Signalement::findOrFail($request->integer('signalement_id'));
 
-        $collecte = Collecte::create($validated);
+            $signalement->update(['statut' => 'en_cours']);
 
-        // Notifier le citoyen
-        $signalement = Signalement::find($validated['signalement_id']);
-        Notification::create([
-            'user_id' => $signalement->user_id,
-            'titre' => 'Collecte planifiée',
-            'message' => "Une collecte est prévue pour votre signalement le " . $validated['date_passage'] . ".",
-        ]);
+            Notification::create([
+                'user_id' => $signalement->user_id,
+                'titre' => 'Collecte planifiée',
+                'message' => sprintf(
+                    'Une collecte est prévue le %s pour votre signalement à %s.',
+                    $request->date('date_passage')->format('d/m/Y'),
+                    $signalement->commune
+                ),
+            ]);
 
-        return response()->json($collecte, 201);
+            return $collecte;
+        });
+
+        return response()->json([
+            'message' => 'Collecte planifiée avec succès.',
+            'data' => $collecte->load('signalement'),
+        ], 201);
     }
 
-    // Mettre à jour une collecte
-    public function update(Request $request, $id)
+    public function update(UpdateCollecteRequest $request, Collecte $collecte): JsonResponse
     {
-        $collecte = Collecte::findOrFail($id);
-        $validated = $request->validate([
-            'date_passage' => 'sometimes|date',
-            'equipe_assignee' => 'sometimes|string',
-            'statut' => 'sometimes|in:planifiee,terminee',
-        ]);
+        $collecte->update($request->validated());
 
-        $collecte->update($validated);
-        return response()->json($collecte);
+        if ($collecte->statut === 'terminee') {
+            $collecte->signalement()->update(['statut' => 'resolu']);
+        }
+
+        return response()->json([
+            'message' => 'Collecte mise à jour avec succès.',
+            'data' => $collecte->fresh('signalement'),
+        ]);
     }
 
-    // Supprimer une collecte
-    public function destroy($id)
+    public function destroy(Collecte $collecte): JsonResponse
     {
-        $collecte = Collecte::findOrFail($id);
         $collecte->delete();
-        return response()->json(null, 204);
+
+        return response()->json([
+            'message' => 'Collecte supprimée avec succès.',
+        ]);
     }
 }

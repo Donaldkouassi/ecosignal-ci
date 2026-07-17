@@ -4,14 +4,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
+    | Configuration du partage de ressources entre origines (CORS)
     |--------------------------------------------------------------------------
     |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
+    | Configurez ici le partage de ressources entre origines, ou « CORS ».
+    | Ces réglages déterminent les opérations interorigines autorisées dans
+    | les navigateurs web et peuvent être adaptés selon vos besoins.
     |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    | En savoir plus : https://developer.mozilla.org/fr/docs/Web/HTTP/CORS
     |
     */
 
@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        env('FRONTEND_URL', 'http://localhost:3000'),
+        'http://127.0.0.1:3000',
+    ],
 
     'allowed_origins_patterns' => [],
 

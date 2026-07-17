@@ -6,12 +6,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Database Connection Name
+    | Nom de la connexion à la base de données par défaut
     |--------------------------------------------------------------------------
     |
-    | Here you may specify which of the database connections below you wish
-    | to use as your default connection for all database work. Of course
-    | you may use many connections at once using the Database library.
+    | Vous pouvez indiquer ici la connexion ci-dessous à utiliser par défaut
+    | pour toutes les opérations sur la base de données. Vous pouvez bien sûr
+    | utiliser plusieurs connexions simultanément avec la bibliothèque Database.
     |
     */
 
@@ -19,17 +19,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Database Connections
+    | Connexions aux bases de données
     |--------------------------------------------------------------------------
     |
-    | Here are each of the database connections setup for your application.
-    | Of course, examples of configuring each database platform that is
-    | supported by Laravel is shown below to make development simple.
+    | Voici les connexions aux bases de données configurées pour l’application.
+    | Des exemples de configuration pour chaque plateforme prise en charge
+    | par Laravel sont présentés ci-dessous afin de faciliter le développement.
     |
     |
-    | All database work in Laravel is done through the PHP PDO facilities
-    | so make sure you have the driver for your particular database of
-    | choice installed on your machine before you begin development.
+    | Toutes les opérations de base de données dans Laravel utilisent PDO.
+    | Vérifiez donc que le pilote correspondant à la base choisie est installé
+    | sur votre machine avant de commencer le développement.
     |
     */
 
@@ -59,7 +59,9 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                constant(defined('Pdo\\Mysql::ATTR_SSL_CA')
+                    ? 'Pdo\\Mysql::ATTR_SSL_CA'
+                    : 'PDO::MYSQL_ATTR_SSL_CA') => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -97,12 +99,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Migration Repository Table
+    | Table de suivi des migrations
     |--------------------------------------------------------------------------
     |
-    | This table keeps track of all the migrations that have already run for
-    | your application. Using this information, we can determine which of
-    | the migrations on disk haven't actually been run in the database.
+    | Cette table conserve la liste des migrations déjà exécutées pour
+    | l’application. Ces informations permettent de déterminer quelles
+    | migrations présentes sur le disque n’ont pas encore été appliquées.
     |
     */
 
@@ -110,12 +112,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Redis Databases
+    | Bases de données Redis
     |--------------------------------------------------------------------------
     |
-    | Redis is an open source, fast, and advanced key-value store that also
-    | provides a richer body of commands than a typical key-value system
-    | such as APC or Memcached. Laravel makes it easy to dig right in.
+    | Redis est un stockage clé-valeur libre, rapide et avancé qui propose
+    | davantage de commandes qu’un système classique comme APC ou Memcached.
+    | Laravel permet de l’utiliser facilement.
     |
     */
 

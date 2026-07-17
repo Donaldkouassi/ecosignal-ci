@@ -1,66 +1,130 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EcoSignal CI
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+EcoSignal CI est une application web de signalement et de suivi des dépôts de déchets urbains en Côte d’Ivoire. Elle repose sur une API Laravel sécurisée par Laravel Sanctum et une interface React.
 
-## About Laravel
+## Fonctionnalités
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Citoyen
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- création d’un compte et connexion sécurisée ;
+- création d’un signalement avec commune, catégorie, description, photo et position facultatives ;
+- consultation exclusive de ses propres signalements ;
+- suivi du statut et de la collecte planifiée ;
+- consultation de ses notifications ;
+- consultation des conseils écologiques.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Administrateur
 
-## Learning Laravel
+- consultation de tous les signalements ;
+- mise à jour des statuts ;
+- suppression d’un signalement ;
+- planification et gestion des collectes ;
+- création de conseils écologiques ;
+- consultation des statistiques globales.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Architecture
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```text
+React (frontend)
+      |
+      | HTTP / JSON + Bearer Token
+      v
+Laravel REST API + Sanctum
+      |
+      v
+MySQL en production / SQLite en mémoire pour les tests
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Le frontend est organisé en `pages`, `components` et `services`. Le backend sépare les contrôleurs, les Form Requests, les modèles, les middlewares, les migrations et les tests.
 
-## Laravel Sponsors
+## Installation du backend
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Prérequis : PHP 8.1+, Composer et MySQL.
 
-### Premium Partners
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Configurer ensuite les variables de base de données dans `.env`, puis exécuter :
 
-## Contributing
+```bash
+php artisan migrate:fresh --seed
+php artisan storage:link
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Comptes de démonstration créés par le seeder :
 
-## Code of Conduct
+| Rôle | Email | Mot de passe |
+|---|---|---|
+| Administrateur | `admin@ecosignal.ci` | `password123` |
+| Citoyen | `citoyen@ecosignal.ci` | `password123` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Installation du frontend
 
-## Security Vulnerabilities
+Prérequis : Node.js 18+ et npm.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm start
+```
 
-## License
+Par défaut, le frontend utilise `http://127.0.0.1:8000/api`. Cette adresse peut être modifiée dans `frontend/.env` :
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+REACT_APP_API_URL=http://127.0.0.1:8000/api
+```
+
+## Tests
+
+### Backend
+
+Les tests utilisent SQLite en mémoire et n’altèrent pas la base MySQL locale.
+
+```bash
+php artisan test
+```
+
+Ils couvrent notamment :
+
+- inscription et connexion ;
+- unicité de l’adresse email ;
+- accès non authentifié ;
+- propriété des signalements ;
+- droits administrateur ;
+- planification unique d’une collecte ;
+- création automatique d’une notification ;
+- isolation des notifications entre utilisateurs.
+
+### Frontend
+
+```bash
+cd frontend
+npm test -- --watchAll=false
+```
+
+## Routes principales
+
+| Méthode | Route | Accès |
+|---|---|---|
+| POST | `/api/auth/register` | Public |
+| POST | `/api/auth/login` | Public |
+| GET | `/api/auth/profile` | Authentifié |
+| POST | `/api/auth/logout` | Authentifié |
+| GET | `/api/signalements` | Authentifié |
+| POST | `/api/signalements` | Authentifié |
+| PATCH | `/api/signalements/{id}/statut` | Administrateur |
+| DELETE | `/api/signalements/{id}` | Administrateur |
+| GET | `/api/collectes` | Administrateur |
+| POST | `/api/collectes` | Administrateur |
+| GET | `/api/notifications` | Authentifié |
+| GET | `/api/conseils` | Public |
+| GET | `/api/statistiques` | Public |
+
+## Documentation
+
+Le dossier `docs` contient le rapport technique détaillant la conception, les choix techniques, le modèle de données et la stratégie de tests.

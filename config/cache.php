@@ -6,12 +6,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Cache Store
+    | Stockage de cache par défaut
     |--------------------------------------------------------------------------
     |
-    | This option controls the default cache connection that gets used while
-    | using this caching library. This connection is used when another is
-    | not explicitly specified when executing a given caching function.
+    | Cette option définit la connexion de cache utilisée par défaut lorsqu’une
+    | autre connexion n’est pas indiquée explicitement.
     |
     */
 
@@ -19,14 +18,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cache Stores
+    | Stockages de cache
     |--------------------------------------------------------------------------
     |
-    | Here you may define all of the cache "stores" for your application as
-    | well as their drivers. You may even define multiple stores for the
-    | same cache driver to group types of items stored in your caches.
+    | Définissez ici les stockages de cache et leurs pilotes. Plusieurs
+    | stockages peuvent utiliser le même pilote afin de regrouper les données.
     |
-    | Supported drivers: "apc", "array", "database", "file",
+    | Pilotes pris en charge : "apc", "array", "database", "file",
     |         "memcached", "redis", "dynamodb", "octane", "null"
     |
     */
@@ -97,12 +95,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cache Key Prefix
+    | Préfixe des clés de cache
     |--------------------------------------------------------------------------
     |
-    | When utilizing the APC, database, memcached, Redis, or DynamoDB cache
-    | stores there might be other applications using the same cache. For
-    | that reason, you may prefix every cache key to avoid collisions.
+    | Si plusieurs applications utilisent le même cache APC, base de données,
+    | Memcached, Redis ou DynamoDB, un préfixe évite les collisions de clés.
     |
     */
 

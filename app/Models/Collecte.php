@@ -16,6 +16,10 @@ class Collecte extends Model
         'statut',
     ];
 
+    protected $casts = [
+        'date_passage' => 'date',
+    ];
+
     // Relation
     public function signalement()
     {

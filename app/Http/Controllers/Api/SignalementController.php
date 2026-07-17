@@ -3,68 +3,105 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Signalement\StoreSignalementRequest;
+use App\Http\Requests\Signalement\UpdateSignalementStatusRequest;
 use App\Models\Signalement;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class SignalementController extends Controller
 {
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(
-            Signalement::latest()->get()
-        );
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'commune' => 'required|string|max:100',
-            'categorie' => 'required|string|in:plastique,organique,encombrant,mixte,autre',
-            'description' => 'required|string|min:5',
+        $filters = $request->validate([
+            'statut' => ['sometimes', 'string', Rule::in(['en_attente', 'en_cours', 'resolu'])],
+            'commune' => ['sometimes', 'string', 'max:100'],
+            'per_page' => ['sometimes', 'integer', 'between:1,50'],
+            'page' => ['sometimes', 'integer', 'min:1'],
         ]);
 
-        $demoUser = User::firstOrCreate(
-            ['email' => 'demo@ecosignal.ci'],
-            [
-                'nom' => 'Utilisateur',
-                'prenom' => 'Démo',
-                'password' => Hash::make('password'),
-                'role' => 'citoyen',
-            ]
-        );
+        $query = Signalement::query()
+            ->with(['user:id,nom,prenom,email', 'collecte'])
+            ->latest();
+
+        if ($request->user()->role !== 'admin') {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        if (isset($filters['statut'])) {
+            $query->where('statut', $filters['statut']);
+        }
+
+        if (isset($filters['commune'])) {
+            $query->where('commune', $filters['commune']);
+        }
+
+        $perPage = $filters['per_page'] ?? 10;
+
+        return response()->json($query->paginate($perPage));
+    }
+
+    public function show(Request $request, Signalement $signalement): JsonResponse
+    {
+        if ($request->user()->role !== 'admin' && $signalement->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Accès interdit.'], 403);
+        }
+
+        return response()->json($signalement->load(['user:id,nom,prenom,email', 'collecte']));
+    }
+
+    public function store(StoreSignalementRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $photoPath = $request->hasFile('photo')
+            ? $request->file('photo')->store('signalements', 'public')
+            : null;
 
         $signalement = Signalement::create([
-            'user_id' => $demoUser->id,
+            'user_id' => $request->user()->id,
             'commune' => $validated['commune'],
             'categorie' => $validated['categorie'],
             'description' => $validated['description'],
+            'photo_path' => $photoPath,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
             'statut' => 'en_attente',
         ]);
 
-        return response()->json($signalement, 201);
+        return response()->json([
+            'message' => 'Signalement enregistré avec succès.',
+            'data' => $signalement,
+        ], 201);
     }
 
-    public function updateStatut(Request $request, Signalement $signalement)
-    {
-        $validated = $request->validate([
-            'statut' => 'required|string|in:en_attente,en_cours,resolu',
-        ]);
+    public function updateStatut(
+        UpdateSignalementStatusRequest $request,
+        Signalement $signalement
+    ): JsonResponse {
+        $signalement->update($request->validated());
 
-        $signalement->update([
-            'statut' => $validated['statut'],
+        return response()->json([
+            'message' => 'Statut mis à jour avec succès.',
+            'data' => $signalement->fresh(),
         ]);
-
-        return response()->json($signalement);
     }
 
-    public function destroy(Signalement $signalement)
+    public function destroy(Request $request, Signalement $signalement): JsonResponse
     {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Accès réservé aux administrateurs.'], 403);
+        }
+
+        if ($signalement->photo_path) {
+            Storage::disk('public')->delete($signalement->photo_path);
+        }
+
         $signalement->delete();
 
         return response()->json([
-            'message' => 'Signalement supprimé avec succès.'
+            'message' => 'Signalement supprimé avec succès.',
         ]);
     }
 }

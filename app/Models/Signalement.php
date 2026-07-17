@@ -20,6 +20,11 @@ class Signalement extends Model
         'statut',
     ];
 
+    protected $casts = [
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+    ];
+
     // Relations
     public function user()
     {

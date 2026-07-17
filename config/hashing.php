@@ -4,14 +4,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Hash Driver
+    | Pilote de hachage par défaut
     |--------------------------------------------------------------------------
     |
-    | This option controls the default hash driver that will be used to hash
-    | passwords for your application. By default, the bcrypt algorithm is
-    | used; however, you remain free to modify this option if you wish.
+    | Cette option définit le pilote utilisé par défaut pour hacher les mots
+    | de passe. L’algorithme bcrypt est utilisé par défaut, mais cette valeur
+    | peut être modifiée.
     |
-    | Supported: "bcrypt", "argon", "argon2id"
+    | Pris en charge : « bcrypt », « argon », « argon2id »
     |
     */
 
@@ -19,12 +19,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Bcrypt Options
+    | Options de Bcrypt
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the configuration options that should be used when
-    | passwords are hashed using the Bcrypt algorithm. This will allow you
-    | to control the amount of time it takes to hash the given password.
+    | Configurez ici les options utilisées par l’algorithme Bcrypt afin de
+    | contrôler notamment le temps nécessaire au hachage d’un mot de passe.
     |
     */
 
@@ -35,12 +34,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Argon Options
+    | Options d’Argon
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the configuration options that should be used when
-    | passwords are hashed using the Argon algorithm. These will allow you
-    | to control the amount of time it takes to hash the given password.
+    | Configurez ici les options utilisées par l’algorithme Argon afin de
+    | contrôler notamment le temps nécessaire au hachage d’un mot de passe.
     |
     */
 

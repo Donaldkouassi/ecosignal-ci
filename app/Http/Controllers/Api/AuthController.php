@@ -3,68 +3,59 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Inscription
-    public function register(Request $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
+        $user = User::create([
+            ...$request->safe()->except('password'),
+            'password' => Hash::make((string) $request->string('password')),
+            'role' => 'citoyen',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-        $user = User::create($validated);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
+            'message' => 'Compte créé avec succès.',
             'user' => $user,
-            'token' => $token,
+            'token' => $user->createToken('ecosignal-web')->plainTextToken,
         ], 201);
     }
 
-    // Connexion
-    public function login(Request $request)
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $user = User::where('email', $request->string('email'))->first();
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! $user || ! Hash::check((string) $request->string('password'), $user->password)) {
             return response()->json([
-                'message' => 'Email ou mot de passe incorrect.'
+                'message' => 'Email ou mot de passe incorrect.',
             ], 401);
         }
 
-        $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $user->tokens()->delete();
 
         return response()->json([
+            'message' => 'Connexion réussie.',
             'user' => $user,
-            'token' => $token,
+            'token' => $user->createToken('ecosignal-web')->plainTextToken,
         ]);
     }
 
-    // Déconnexion
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->tokens()->delete();
+        $request->user()->currentAccessToken()?->delete();
+
         return response()->json([
-            'message' => 'Déconnecté avec succès.'
+            'message' => 'Déconnexion réussie.',
         ]);
     }
 
-    // Profil utilisateur
-    public function profile(Request $request)
+    public function profile(Request $request): JsonResponse
     {
         return response()->json($request->user());
     }

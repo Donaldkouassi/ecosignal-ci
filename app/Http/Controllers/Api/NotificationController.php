@@ -4,40 +4,40 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    // Liste des notifications de l'utilisateur connecté
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $notifications = Notification::where('user_id', $request->user()->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return response()->json($notifications);
+        return response()->json(
+            Notification::where('user_id', $request->user()->id)
+                ->latest()
+                ->paginate(10)
+        );
     }
 
-    // Marquer une notification comme lue
-    public function markAsRead($id)
+    public function markAsRead(Request $request, Notification $notification): JsonResponse
     {
-        $notification = Notification::where('user_id', auth()->id())
-            ->where('id', $id)
-            ->firstOrFail();
+        if ($notification->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Accès interdit.'], 403);
+        }
 
-        $notification->lue = true;
-        $notification->save();
+        $notification->update(['lue' => true]);
 
-        return response()->json($notification);
+        return response()->json([
+            'message' => 'Notification marquée comme lue.',
+            'data' => $notification,
+        ]);
     }
 
-    // Compter les notifications non lues
-    public function unreadCount(Request $request)
+    public function unreadCount(Request $request): JsonResponse
     {
-        $count = Notification::where('user_id', $request->user()->id)
-            ->where('lue', false)
-            ->count();
-
-        return response()->json(['unread_count' => $count]);
+        return response()->json([
+            'unread_count' => Notification::where('user_id', $request->user()->id)
+                ->where('lue', false)
+                ->count(),
+        ]);
     }
 }
