@@ -21,7 +21,7 @@ class CollecteControllerTest extends TestCase
 
         $response = $this->postJson('/api/collectes', [
             'signalement_id' => $signalement->id,
-            'date_passage' => '2026-07-15',
+            'date_passage' => now()->addDay()->toDateString(),
             'equipe_assignee' => 'Équipe A',
         ]);
 
@@ -40,7 +40,7 @@ class CollecteControllerTest extends TestCase
 
         $response = $this->postJson('/api/collectes', [
             'signalement_id' => 1,
-            'date_passage' => '2026-07-15',
+            'date_passage' => now()->addDay()->toDateString(),
             'equipe_assignee' => 'Équipe A',
         ]);
 

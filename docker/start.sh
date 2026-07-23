@@ -16,6 +16,7 @@ chmod -R ug+rwX storage bootstrap/cache
 
 php artisan config:cache
 php artisan migrate --force
+php artisan storage:link || true
 
 envsubst '${PORT}' \
     < /etc/nginx/templates/default.conf.template \

@@ -1,4 +1,5 @@
 import React from "react";
+import { storageUrl } from "../services/api";
 
 const statusLabels = {
   en_attente: "En attente",
@@ -9,6 +10,14 @@ const statusLabels = {
 function SignalementCard({ signalement, isAdmin = false, onStatusChange, onDelete, onPlanCollecte }) {
   return (
     <article className="signal-card">
+      {signalement.photo_path && (
+        <img
+          className="signal-card-photo"
+          src={storageUrl(signalement.photo_path)}
+          alt={`Dépôt de déchets signalé à ${signalement.commune}`}
+          loading="lazy"
+        />
+      )}
       <div>
         <h3>{signalement.commune}</h3>
         <p>{signalement.description}</p>
