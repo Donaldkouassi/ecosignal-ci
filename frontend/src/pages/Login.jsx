@@ -44,10 +44,12 @@ function Login({ onAuthenticated, onNavigate }) {
         <button className="primary" type="submit" disabled={submitting}>
           {submitting ? "Connexion..." : "Se connecter"}
         </button>
-        <aside className="demo-hint">
-          <strong>Compte de démonstration</strong>
-          <span>citoyen@ecosignal.ci · password123</span>
-        </aside>
+        {process.env.NODE_ENV !== "production" && (
+          <aside className="demo-hint">
+            <strong>Compte de démonstration</strong>
+            <span>citoyen@ecosignal.ci · password123</span>
+          </aside>
+        )}
         <button className="text-button" type="button" onClick={() => onNavigate("inscription")}>
           Pas encore de compte ? <strong>S’inscrire</strong>
         </button>

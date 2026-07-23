@@ -1,5 +1,11 @@
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api";
+const STORAGE_URL = API_URL.replace(/\/api\/?$/, "");
 const REQUEST_TIMEOUT = 15000;
+
+export function storageUrl(path) {
+  if (!path) return null;
+  return `${STORAGE_URL}/storage/${path}`;
+}
 
 export class ApiError extends Error {
   constructor(message, status, errors = {}) {

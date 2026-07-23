@@ -1303,6 +1303,14 @@ nav .login:hover {
   border-radius: 18px;
 }
 
+.signal-card-photo {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
 .signal-card h3,
 .notification-card h3 {
   margin: 0 0 7px;
