@@ -19,6 +19,12 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+    | Remise à zéro unique des signalements de test avant l'installation des
+    | données de démonstration (voir DatabaseSeeder). Désactivée par défaut.
+    */
+    'demo_reset' => (bool) env('DEMO_RESET', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Environnement de l’application
     |--------------------------------------------------------------------------
