@@ -13,9 +13,9 @@ beforeEach(() => {
     })),
   });
   global.fetch = jest.fn((url) => {
-    const payload = url.includes("/conseils")
+    const payload = url.includes("/conseils") || url.includes("/carte")
       ? []
-      : { total_signalements: 0, en_attente: 0, en_cours: 0, resolus: 0, par_commune: [] };
+      : { total_signalements: 0, en_attente: 0, en_cours: 0, resolus: 0, par_commune: [], taux_resolution: 0 };
 
     return Promise.resolve({
       ok: true,
@@ -32,21 +32,21 @@ afterEach(() => {
 async function renderLoadedApp() {
   render(<App />);
   await waitFor(() => {
-    expect(screen.getByRole("region", { name: /impact ecosignal ci/i })).toHaveTextContent("0%");
+    expect(screen.getByRole("region", { name: /le service en chiffres/i })).toHaveTextContent("0 %");
   });
 }
 
 test("affiche la page d'accueil EcoSignal CI", async () => {
   await renderLoadedApp();
 
-  expect(screen.getByRole("heading", { name: /un quartier propre commence/i })).toBeInTheDocument();
-  expect(screen.getByRole("region", { name: /impact ecosignal ci/i })).toBeInTheDocument();
-  expect(global.fetch).toHaveBeenCalledTimes(2);
+  expect(screen.getByRole("heading", { name: /un dépôt sauvage dans votre rue/i })).toBeInTheDocument();
+  expect(screen.getByRole("region", { name: /le service en chiffres/i })).toBeInTheDocument();
+  expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining("/carte"), expect.anything());
 });
 
 test("redirige un visiteur vers la connexion pour signaler", async () => {
   await renderLoadedApp();
-  fireEvent.click(screen.getByRole("button", { name: /faire un signalement/i }));
+  fireEvent.click(screen.getAllByRole("button", { name: /signaler un dépôt/i })[0]);
 
   expect(await screen.findByRole("heading", { name: /connexion/i })).toBeInTheDocument();
 });

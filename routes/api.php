@@ -20,6 +20,7 @@ Route::prefix('auth')->group(function () {
 
 Route::get('/conseils', [ConseilController::class, 'index']);
 Route::get('/statistiques', [StatistiqueController::class, 'index']);
+Route::get('/carte', [StatistiqueController::class, 'carte'])->middleware('throttle:60,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/signalements', [SignalementController::class, 'index']);

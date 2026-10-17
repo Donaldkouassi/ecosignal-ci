@@ -1,123 +1,96 @@
 import React from "react";
 import BarChart from "../components/charts/BarChart";
-import CountUp from "../components/CountUp";
+import PublicMap from "../components/PublicMap";
 
-function Accueil({ statistiques, conseilsCount, loading, user, onNavigate }) {
-  const resolvedRate = statistiques.total_signalements
-    ? Math.round((statistiques.resolus / statistiques.total_signalements) * 100)
-    : 0;
+function formatJours(value) {
+  if (value == null) return "—";
+  return value.toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+}
+
+function Accueil({ statistiques, loading, user, onNavigate }) {
+  const signaler = () => onNavigate(user ? "signaler" : "connexion");
+  const total = statistiques.total_signalements || 0;
+  const collectes = statistiques.collectes_terminees ?? statistiques.resolus ?? 0;
+  const taux = statistiques.taux_resolution ?? (total ? Math.round((statistiques.resolus / total) * 100) : 0);
 
   return (
-    <main>
-      <section className="hero">
-        <div className="hero-copy">
-          <span className="badge"><span aria-hidden="true">●</span> Agir pour la propreté</span>
-          <h1>Un quartier propre commence par un signalement</h1>
-          <p>
-            Photographiez, localisez et signalez un dépôt de déchets en quelques instants.
-            EcoSignal CI facilite le lien entre citoyens et équipes de collecte.
+    <main className="home">
+      <section className="home-hero">
+        <div className="home-hero-copy">
+          <h1>Un dépôt sauvage dans votre rue&nbsp;? Signalez-le en une minute.</h1>
+          <p className="home-lead">
+            Photo, position et type de déchet&nbsp;: votre signalement arrive directement aux équipes
+            de collecte de votre commune, et vous êtes prévenu à chaque étape jusqu'à ce que la rue soit propre.
           </p>
-          <div className="actions">
-            <button className="primary" onClick={() => onNavigate(user ? "signaler" : "connexion")}>
-              Faire un signalement <span aria-hidden="true">→</span>
-            </button>
-            <button className="secondary" onClick={() => onNavigate("conseils")}>
-              Découvrir les bons gestes
-            </button>
+          <div className="home-actions">
+            <button className="signal-button" onClick={signaler}>Signaler un dépôt</button>
+            <button className="quiet-button" onClick={() => onNavigate("conseils")}>Voir les bons gestes</button>
           </div>
-          <div className="hero-reassurance" aria-label="Avantages du service">
-            <span>✓ Gratuit</span>
-            <span>✓ Simple</span>
-            <span>✓ Suivi transparent</span>
-          </div>
+          <p className="home-note">Gratuit, sans application à installer.</p>
         </div>
 
-        <figure className="clean-city-visual">
-          <img
-            src="/images/abidjan-clean-city-hero.webp"
-            alt="Boulevard arboré et carrefour propre dans une ville ivoirienne moderne"
-          />
-          <div className="city-photo-shade" />
-          <div className="city-label">
-            <span aria-hidden="true">✨</span>
-            <div><strong>Ville propre</strong><small>Notre ambition commune</small></div>
-          </div>
-          <div className="photo-status">
-            <span className="live-dot" />
-            <div><strong>Espaces valorisés</strong><small>Propres, verts et agréables</small></div>
-          </div>
-          <figcaption className="sr-only">Vision d’un espace urbain propre, vert et développé.</figcaption>
+        <figure className="home-map">
+          <PublicMap />
+          <figcaption>
+            {loading
+              ? "Chargement des signalements…"
+              : `${total} dépôts signalés à ce jour, dont ${statistiques.resolus || 0} déjà collectés.`}
+          </figcaption>
         </figure>
       </section>
 
-      <section className="impact-strip" aria-label="Impact EcoSignal CI">
-        <div><strong>{loading ? "—" : <CountUp value={statistiques.total_signalements} />}</strong><span>signalements reçus</span></div>
-        <div><strong>{loading ? "—" : <CountUp value={statistiques.resolus} />}</strong><span>situations résolues</span></div>
-        <div><strong>{loading ? "—" : `${resolvedRate}%`}</strong><span>de résolution</span></div>
-        <div><strong>{loading ? "—" : <CountUp value={conseilsCount} />}</strong><span>conseils pratiques</span></div>
+      <section className="home-figures" aria-label="Le service en chiffres">
+        <div className="figure">
+          <strong>{loading ? "—" : collectes}</strong>
+          <span>dépôts collectés après un signalement</span>
+        </div>
+        <div className="figure">
+          <strong>{loading ? "—" : `${formatJours(statistiques.delai_moyen_resolution_jours)} jours`}</strong>
+          <span>en moyenne entre le signalement et la collecte</span>
+        </div>
+        <div className="figure">
+          <strong>{loading ? "—" : `${taux} %`}</strong>
+          <span>des signalements déjà résolus</span>
+        </div>
+      </section>
+
+      <section className="home-section" aria-labelledby="etapes-titre">
+        <h2 id="etapes-titre">Du signalement à la collecte</h2>
+        <ol className="process">
+          <li>
+            <h3>Vous signalez</h3>
+            <p>Photo, position GPS et type de déchet, depuis votre téléphone.</p>
+          </li>
+          <li>
+            <h3>La collecte est planifiée</h3>
+            <p>Le gestionnaire voit le dépôt sur la carte et programme le passage d'une équipe.</p>
+          </li>
+          <li>
+            <h3>Vous êtes prévenu</h3>
+            <p>Une notification vous donne la date de passage, puis confirme la collecte.</p>
+          </li>
+        </ol>
       </section>
 
       {!loading && statistiques.par_commune?.length > 0 && (
-        <section className="section">
-          <div className="section-heading">
-            <p className="eyebrow">Transparence des données</p>
-            <h2>Les communes les plus actives</h2>
-            <p>Le nombre de signalements reçus, commune par commune, mis à jour en continu.</p>
+        <section className="home-section home-communes" aria-labelledby="communes-titre">
+          <div className="home-communes-text">
+            <h2 id="communes-titre">Où les habitants signalent le plus</h2>
+            <p>
+              Chaque signalement dessine la carte des points noirs. Les mairies s'en servent pour placer
+              bacs et équipes là où le besoin est réel.
+            </p>
           </div>
-          <div className="chart-card content-panel">
-            <BarChart
-              data={statistiques.par_commune
-                .slice(0, 5)
-                .map((item) => ({ label: item.commune, total: item.total }))}
-              caption="Nombre de signalements par commune"
-            />
-          </div>
+          <BarChart
+            data={statistiques.par_commune.slice(0, 6).map((item) => ({ label: item.commune, total: item.total }))}
+            caption="Nombre de signalements par commune"
+          />
         </section>
       )}
 
-      <section className="section">
-        <div className="section-heading">
-          <p className="eyebrow">Votre action compte</p>
-          <h2>De la rue propre à la ville durable</h2>
-          <p>Un parcours simple pour transformer rapidement un problème observé en action concrète.</p>
-        </div>
-        <div className="cards">
-          <article className="card"><span className="step-number">01</span><span className="card-icon">📷</span><h3>Je photographie</h3><p>Une image claire aide les équipes à comprendre immédiatement la situation.</p></article>
-          <article className="card"><span className="step-number">02</span><span className="card-icon">📍</span><h3>Je localise</h3><p>J’indique la commune et, si je le souhaite, la position exacte du dépôt.</p></article>
-          <article className="card"><span className="step-number">03</span><span className="card-icon">🛻</span><h3>Je suis l’action</h3><p>Je reçois les informations de traitement jusqu’à la collecte des déchets.</p></article>
-        </div>
-      </section>
-
-      <section className="clean-showcase">
-        <div className="showcase-copy">
-          <p className="eyebrow">Un réflexe citoyen</p>
-          <h2>Préserver notre cadre de vie, ensemble</h2>
-          <p>
-            Chaque signalement améliore la visibilité des dépôts sauvages et aide à mieux
-            organiser les interventions. Un petit geste numérique pour un impact bien réel.
-          </p>
-          <ul>
-            <li><span>✓</span> Des rues plus agréables et plus sûres</li>
-            <li><span>✓</span> Une intervention mieux ciblée des équipes</li>
-            <li><span>✓</span> Une communauté informée et engagée</li>
-          </ul>
-        </div>
-        <div className="showcase-quote">
-          <span className="quote-mark" aria-hidden="true">“</span>
-          <blockquote>La propreté de nos quartiers est l’affaire de tous.</blockquote>
-          <p>EcoSignal CI rend chaque citoyen acteur du changement.</p>
-        </div>
-      </section>
-
-      <section className="home-cta">
-        <div>
-          <p className="eyebrow">Passez à l’action</p>
-          <h2>Vous avez repéré un dépôt de déchets ?</h2>
-          <p>Quelques informations suffisent pour alerter et suivre la prise en charge.</p>
-        </div>
-        <button className="primary" onClick={() => onNavigate(user ? "signaler" : "connexion")}>
-          Signaler maintenant <span aria-hidden="true">→</span>
-        </button>
+      <section className="home-closing">
+        <h2>Vous voyez un dépôt en ce moment&nbsp;?</h2>
+        <button className="signal-button" onClick={signaler}>Signaler un dépôt</button>
       </section>
     </main>
   );

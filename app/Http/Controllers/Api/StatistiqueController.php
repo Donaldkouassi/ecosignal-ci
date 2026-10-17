@@ -32,6 +32,30 @@ class StatistiqueController extends Controller
         ]);
     }
 
+    /**
+     * Points publics pour la carte de l'accueil : position, statut, type et commune.
+     * Aucune donnée personnelle (auteur, description, photo) n'est exposée.
+     */
+    public function carte()
+    {
+        return response()->json(
+            Signalement::query()
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->latest()
+                ->limit(500)
+                ->get(['id', 'latitude', 'longitude', 'statut', 'categorie', 'commune'])
+                ->map(fn ($s) => [
+                    'id' => $s->id,
+                    'latitude' => (float) $s->latitude,
+                    'longitude' => (float) $s->longitude,
+                    'statut' => $s->statut,
+                    'categorie' => $s->categorie,
+                    'commune' => $s->commune,
+                ])
+        );
+    }
+
     private function tauxResolution(): int
     {
         $total = Signalement::count();

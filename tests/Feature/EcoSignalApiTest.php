@@ -70,4 +70,16 @@ class EcoSignalApiTest extends TestCase
             ->assertJsonPath('taux_resolution', 0)
             ->assertJsonPath('delai_moyen_resolution_jours', null);
     }
+
+    public function test_carte_publique_sans_donnees_personnelles(): void
+    {
+        Signalement::factory()->create(['latitude' => 5.35, 'longitude' => -4.01, 'description' => 'Texte privé']);
+        Signalement::factory()->create(['latitude' => null, 'longitude' => null]);
+
+        $response = $this->getJson('/api/carte');
+
+        $response->assertStatus(200)->assertJsonCount(1);
+        $this->assertSame(['id', 'latitude', 'longitude', 'statut', 'categorie', 'commune'], array_keys($response->json()[0]));
+        $this->assertStringNotContainsString('Texte privé', $response->getContent());
+    }
 }

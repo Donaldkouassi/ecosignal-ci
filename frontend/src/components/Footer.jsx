@@ -1,14 +1,18 @@
 import React from "react";
+import BrandMark from "./BrandMark";
 
 function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <div>
-          <strong>🌿 EcoSignal CI</strong>
-          <p>Agir ensemble pour des quartiers plus propres.</p>
+        <div className="footer-brand">
+          <BrandMark size={30} />
+          <div>
+            <strong>EcoSignal CI</strong>
+            <p>Un service citoyen pour des quartiers propres, en Côte d'Ivoire.</p>
+          </div>
         </div>
-        <p>Plateforme citoyenne de signalement et de suivi des déchets urbains.</p>
+        <p className="footer-meta">Fonds de carte OpenStreetMap et CARTO.</p>
       </div>
     </footer>
   );

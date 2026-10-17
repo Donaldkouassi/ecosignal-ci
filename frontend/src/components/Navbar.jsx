@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import BrandMark from "./BrandMark";
 
 function Navbar({ user, currentPage, unreadCount, onNavigate, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,8 +35,8 @@ function Navbar({ user, currentPage, unreadCount, onNavigate, onLogout }) {
   return (
     <header className="navbar">
       <button className="brand" type="button" onClick={() => navigate("accueil")} aria-label="EcoSignal CI — Accueil">
-        <span className="brand-mark" aria-hidden="true">🌿</span>
-        <span>EcoSignal <strong>CI</strong></span>
+        <BrandMark />
+        <span>EcoSignal CI</span>
       </button>
 
       <button

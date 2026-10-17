@@ -1,6 +1,6 @@
 import React from "react";
 
-function BarChart({ data, orientation = "horizontal", color = "var(--green-600)", caption }) {
+function BarChart({ data, orientation = "horizontal", color = "var(--lagune)", caption }) {
   if (!data || data.length === 0) {
     return <p className="chart-empty">Aucune donnée à afficher pour le moment.</p>;
   }
