@@ -39,7 +39,7 @@ async function renderLoadedApp() {
 test("affiche la page d'accueil EcoSignal CI", async () => {
   await renderLoadedApp();
 
-  expect(screen.getByRole("heading", { name: /un dépôt sauvage dans votre rue/i })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: /ville propre, commune propre/i })).toBeInTheDocument();
   expect(screen.getByRole("region", { name: /le service en chiffres/i })).toBeInTheDocument();
   expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining("/carte"), expect.anything());
 });

@@ -17,5 +17,5 @@ export function Popup({ children }) {
 }
 
 export function useMap() {
-  return { setView: () => {}, fitBounds: () => {} };
+  return { setView: () => {}, fitBounds: () => {}, flyTo: () => {}, flyToBounds: () => {} };
 }

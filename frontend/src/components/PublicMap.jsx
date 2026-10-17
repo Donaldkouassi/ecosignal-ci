@@ -1,8 +1,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import { apiRequest } from "../services/api";
 
 const ABIDJAN = [5.345, -4.02];
 
@@ -12,7 +11,7 @@ export const STATUTS = {
   resolu: { label: "Collecté", className: "pin-resolu" },
 };
 
-const CATEGORIES = {
+export const CATEGORIES = {
   plastique: "Plastique",
   organique: "Organique",
   encombrant: "Encombrant",
@@ -20,78 +19,73 @@ const CATEGORIES = {
   autre: "Autre",
 };
 
-function pinIcon(statut, index) {
+function inAbidjan(p) {
+  return p.latitude > 5.1 && p.latitude < 5.6 && p.longitude > -4.4 && p.longitude < -3.7;
+}
+
+function pinIcon(statut, index, highlighted) {
   const meta = STATUTS[statut] || STATUTS.en_attente;
   return L.divIcon({
     className: "",
-    html: `<span class="pin ${meta.className}" style="--i:${index}"></span>`,
+    html: `<span class="pin ${meta.className}${highlighted ? " pin-focus" : ""}" style="--i:${index}"></span>`,
     iconSize: [18, 18],
     iconAnchor: [9, 9],
     popupAnchor: [0, -10],
   });
 }
 
-// Cadre la carte sur Abidjan : les points de l'intérieur du pays restent dans la liste,
-// mais la vue d'accueil montre la ville où se concentrent les signalements.
-function FitAbidjan({ points }) {
+// Recadre la carte quand la commune choisie change : vue d'ensemble d'Abidjan
+// par défaut, zoom animé sur les dépôts d'une commune quand elle est sélectionnée.
+function Cadrage({ points, commune }) {
   const map = useMap();
   useEffect(() => {
-    const abidjan = points.filter((p) => p.latitude > 5.1 && p.latitude < 5.6 && p.longitude > -4.4 && p.longitude < -3.7);
-    if (abidjan.length > 1) {
-      map.fitBounds(L.latLngBounds(abidjan.map((p) => [p.latitude, p.longitude])), { padding: [28, 28], maxZoom: 13 });
+    const cible = commune ? points.filter((p) => p.commune === commune) : points.filter(inAbidjan);
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const options = { padding: [40, 40], maxZoom: commune ? 15 : 13, animate: !reduceMotion, duration: 0.9 };
+    if (cible.length > 1) {
+      map.flyToBounds(L.latLngBounds(cible.map((p) => [p.latitude, p.longitude])), options);
+    } else if (cible.length === 1) {
+      map.flyTo([cible[0].latitude, cible[0].longitude], 15, options);
     } else {
       map.setView(ABIDJAN, 12);
     }
-  }, [map, points]);
+  }, [map, points, commune]);
   return null;
 }
 
-function PublicMap() {
-  const [points, setPoints] = useState([]);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    apiRequest("/carte")
-      .then((data) => active && setPoints(Array.isArray(data) ? data : []))
-      .catch(() => active && setFailed(true));
-    return () => {
-      active = false;
-    };
-  }, []);
-
+function PublicMap({ points, visibleStatuts, commune, onSelectCommune, height }) {
   const markers = useMemo(
-    () => points.map((point, index) => ({ ...point, icon: pinIcon(point.statut, index) })),
-    [points]
+    () =>
+      points
+        .filter((p) => visibleStatuts.includes(p.statut))
+        .map((p, index) => ({ ...p, icon: pinIcon(p.statut, index, commune && p.commune === commune) })),
+    [points, visibleStatuts, commune]
   );
 
   return (
-    <div className="public-map">
-      <MapContainer center={ABIDJAN} zoom={12} scrollWheelZoom={false} zoomControl={false} attributionControl>
+    <div className="public-map" style={height ? { height } : undefined}>
+      <MapContainer center={ABIDJAN} zoom={12} scrollWheelZoom={false} attributionControl>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
-        <FitAbidjan points={points} />
+        <Cadrage points={points} commune={commune} />
         {markers.map((point) => (
-          <Marker key={point.id} position={[point.latitude, point.longitude]} icon={point.icon}>
+          <Marker
+            key={point.id}
+            position={[point.latitude, point.longitude]}
+            icon={point.icon}
+            eventHandlers={{ click: () => onSelectCommune?.(point.commune) }}
+          >
             <Popup>
               <div className="map-popup">
                 <h4>{point.commune}</h4>
-                <p>{CATEGORIES[point.categorie] || "Déchets"} · {(STATUTS[point.statut] || STATUTS.en_attente).label}</p>
+                <p>{CATEGORIES[point.categorie] || "Déchets"}, {(STATUTS[point.statut] || STATUTS.en_attente).label.toLowerCase()}</p>
               </div>
             </Popup>
           </Marker>
         ))}
       </MapContainer>
-
-      <ul className="map-key" aria-label="Légende de la carte">
-        {Object.entries(STATUTS).map(([key, meta]) => (
-          <li key={key}><span className={`pin ${meta.className}`} aria-hidden="true" />{meta.label}</li>
-        ))}
-      </ul>
-
-      {failed && <p className="map-fallback">La carte n'a pas pu se charger. Rechargez la page dans un instant.</p>}
     </div>
   );
 }

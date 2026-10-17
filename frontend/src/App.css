@@ -2483,29 +2483,71 @@ textarea:focus {
   --gutter: max(5vw, 16px);
 }
 
+/* Bandeau : la photo d'Abidjan propre, plein cadre */
 .home-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(520px, 78vh, 760px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  color: #fff;
+}
+
+.home-hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  transform: scale(1.06);
+  animation: hero-settle 1600ms var(--ease-out) forwards;
+}
+
+.home-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(10, 54, 64, 0.82) 0%, rgba(10, 54, 64, 0.55) 42%, rgba(10, 54, 64, 0) 72%),
+    linear-gradient(0deg, rgba(10, 54, 64, 0.55) 0%, rgba(10, 54, 64, 0) 45%);
+}
+
+@keyframes hero-settle {
+  to { transform: scale(1); }
+}
+
+.home-hero-inner {
   width: min(1240px, calc(100% - 2 * var(--gutter)));
-  margin: clamp(28px, 5vw, 64px) auto clamp(40px, 6vw, 72px);
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  align-items: center;
-  gap: clamp(28px, 5vw, 64px);
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 96px) 0 clamp(36px, 6vw, 64px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.home-hero-copy {
+  max-width: 640px;
 }
 
 .home-hero h1 {
   margin: 0;
-  color: var(--lagune);
-  font-size: clamp(2.3rem, 4.6vw, 3.9rem);
+  color: #fff;
+  font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 650;
   font-variation-settings: "opsz" 96;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
 }
 
 .home-lead {
-  max-width: 46ch;
+  max-width: 48ch;
   margin: 22px 0 0;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.9);
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.6;
 }
@@ -2514,29 +2556,240 @@ textarea:focus {
   margin-top: 30px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  align-items: center;
+  gap: 14px 24px;
 }
 
-.home-note {
-  margin: 16px 0 0;
+.hero-link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
+
+.hero-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Vignette « En direct » */
+.live-card {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+}
+
+.live-title {
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.home-map {
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 0 rgba(232, 121, 43, 0.5);
+  animation: live-pulse 2s infinite;
+}
+
+@keyframes live-pulse {
+  70% { box-shadow: 0 0 0 8px rgba(232, 121, 43, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 121, 43, 0); }
+}
+
+.live-item {
+  display: grid;
+  gap: 4px;
+  animation: live-in 450ms var(--ease-out);
+}
+
+.live-item strong {
+  color: var(--lagune);
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.live-item > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.live-status {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.live-status.pin-attente { background: #fdeee3; color: #9a3f0c; }
+.live-status.pin-cours { background: #e3f0f2; color: var(--lagune); }
+.live-status.pin-resolu { background: #e2f3e9; color: #1d6e3e; }
+
+@keyframes live-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Explorateur de carte */
+.explorer-head {
+  max-width: 720px;
+}
+
+.explorer-head p {
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.explorer-body {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 36px);
+  align-items: start;
+}
+
+.status-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.status-toggle .pin {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+}
+
+.status-toggle[aria-pressed="false"] {
+  color: var(--muted);
+  background: var(--brume);
+  text-decoration: line-through;
+}
+
+.status-toggle[aria-pressed="false"] .pin {
+  opacity: 0.3;
+}
+
+.commune-detail {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--brume);
+}
+
+.commune-detail h3 {
   margin: 0;
+  color: var(--lagune);
+  font-size: 1.35rem;
+  font-weight: 650;
 }
 
-.home-map figcaption {
-  margin-top: 12px;
+.commune-detail p {
+  margin: 6px 0 0;
+  color: var(--ink);
+}
+
+.text-link {
+  margin-top: 10px;
+  padding: 0;
+  background: none;
+  color: var(--lagune);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.commune-list {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.commune-button {
+  width: 100%;
+  padding: 10px 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px 28px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  text-align: left;
+  transition: background 150ms ease;
+}
+
+.commune-button:hover {
+  background: var(--brume);
+}
+
+.commune-button[aria-pressed="true"] {
+  background: var(--lagune);
+  color: #fff;
+}
+
+.commune-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.commune-bar span {
+  display: block;
+  height: 100%;
+  background: var(--feuille);
+}
+
+.commune-count {
+  text-align: right;
+  font-weight: 600;
+}
+
+.commune-legend {
+  margin: 10px 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+}
+
+.explorer-map {
+  position: relative;
 }
 
 .public-map {
   position: relative;
   overflow: hidden;
-  height: clamp(340px, 46vw, 520px);
+  height: clamp(420px, 52vw, 600px);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--brume);
@@ -2549,32 +2802,9 @@ textarea:focus {
   background: var(--brume);
 }
 
-.map-key {
-  position: absolute;
-  z-index: 500;
-  left: 14px;
-  bottom: 14px;
-  margin: 0;
-  padding: 10px 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  list-style: none;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.95);
-  font-size: 0.85rem;
-}
-
-.map-key li {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
 .map-fallback {
   position: absolute;
-  inset: auto 14px 60px 14px;
+  inset: auto 14px 14px 14px;
   z-index: 500;
   margin: 0;
   padding: 10px 14px;
@@ -2582,6 +2812,11 @@ textarea:focus {
   background: #fff;
   color: var(--ink);
   font-size: 0.9rem;
+}
+
+.leaflet-marker-icon .pin-focus {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 3px rgba(14, 76, 90, 0.35);
 }
 
 /* Points de la carte : un seul moment d'animation, l'apparition des dépôts */
@@ -2836,13 +3071,38 @@ textarea:focus {
   }
 
   .public-map {
-    height: 360px;
+    height: 380px;
+  }
+
+  .home-hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .live-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .explorer-body {
+    grid-template-columns: 1fr;
+  }
+
+  .explorer-map {
+    order: -1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .leaflet-marker-icon .pin {
+  .leaflet-marker-icon .pin,
+  .home-hero-photo,
+  .live-dot,
+  .live-item {
     animation: none;
+  }
+
+  .home-hero-photo {
+    transform: none;
   }
 }
 
@@ -2890,4 +3150,10 @@ textarea:focus {
 
 .impact-card {
   border-left: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+  .home-hero::after {
+    background: linear-gradient(180deg, rgba(10, 54, 64, 0.55) 0%, rgba(10, 54, 64, 0.82) 55%, rgba(10, 54, 64, 0.9) 100%);
+  }
 }
