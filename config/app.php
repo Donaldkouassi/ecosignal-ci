@@ -25,6 +25,12 @@ return [
     'demo_reset' => (bool) env('DEMO_RESET', false),
 
     /*
+    | Mot de passe du compte administrateur (admin@ecosignal.ci). S'il est
+    | défini, il remplace le mot de passe de démonstration à chaque démarrage.
+    */
+    'admin_password' => env('ADMIN_PASSWORD'),
+
+    /*
     |--------------------------------------------------------------------------
     | Environnement de l’application
     |--------------------------------------------------------------------------

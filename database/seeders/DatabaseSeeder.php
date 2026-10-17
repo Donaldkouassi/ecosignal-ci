@@ -23,6 +23,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $motDePasseAdmin = config('app.admin_password');
+
+        if ($motDePasseAdmin && ! Hash::check($motDePasseAdmin, $admin->password)) {
+            $admin->forceFill(['password' => Hash::make($motDePasseAdmin)])->save();
+        }
+
         $citoyen = User::firstOrCreate(
             ['email' => 'citoyen@ecosignal.ci'],
             [
