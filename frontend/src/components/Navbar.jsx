@@ -8,7 +8,14 @@ function Navbar({ user, currentPage, unreadCount, onNavigate, onLogout }) {
   ];
 
   if (user) {
-    navigation.splice(1, 0, ["signaler", "Signaler"], ["dashboard", "Mes signalements"], ["notifications", `Notifications${unreadCount ? ` (${unreadCount})` : ""}`]);
+    navigation.splice(
+      1,
+      0,
+      ["signaler", "Signaler"],
+      ["dashboard", "Mes signalements"],
+      ["carte", "Carte"],
+      ["notifications", `Notifications${unreadCount ? ` (${unreadCount})` : ""}`]
+    );
   }
 
   if (user?.role === "admin") {

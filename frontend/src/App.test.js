@@ -3,6 +3,15 @@ import App from "./App";
 
 beforeEach(() => {
   localStorage.clear();
+  // JSDOM ne fournit pas matchMedia ; désactiver les animations dans ces tests.
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: jest.fn((query) => ({
+      matches: query === "(prefers-reduced-motion: reduce)",
+      media: query,
+    })),
+  });
   global.fetch = jest.fn((url) => {
     const payload = url.includes("/conseils")
       ? []
@@ -20,23 +29,30 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test("affiche la page d'accueil EcoSignal CI", async () => {
+async function renderLoadedApp() {
   render(<App />);
+  await waitFor(() => {
+    expect(screen.getByRole("region", { name: /impact ecosignal ci/i })).toHaveTextContent("0%");
+  });
+}
+
+test("affiche la page d'accueil EcoSignal CI", async () => {
+  await renderLoadedApp();
 
   expect(screen.getByRole("heading", { name: /un quartier propre commence/i })).toBeInTheDocument();
   expect(screen.getByRole("region", { name: /impact ecosignal ci/i })).toBeInTheDocument();
-  await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+  expect(global.fetch).toHaveBeenCalledTimes(2);
 });
 
 test("redirige un visiteur vers la connexion pour signaler", async () => {
-  render(<App />);
+  await renderLoadedApp();
   fireEvent.click(screen.getByRole("button", { name: /faire un signalement/i }));
 
   expect(await screen.findByRole("heading", { name: /connexion/i })).toBeInTheDocument();
 });
 
 test("permet d'afficher puis de masquer le mot de passe", async () => {
-  render(<App />);
+  await renderLoadedApp();
   fireEvent.click(screen.getByRole("button", { name: /connexion/i }));
 
   const password = screen.getByLabelText(/^mot de passe$/i, { selector: "input" });

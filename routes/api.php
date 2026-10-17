@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/signalements/{signalement}', [SignalementController::class, 'destroy']);
 
         Route::post('/conseils', [ConseilController::class, 'store']);
+        Route::patch('/conseils/{conseil}', [ConseilController::class, 'update']);
+        Route::delete('/conseils/{conseil}', [ConseilController::class, 'destroy']);
 
         Route::get('/collectes', [CollecteController::class, 'index']);
         Route::post('/collectes', [CollecteController::class, 'store']);

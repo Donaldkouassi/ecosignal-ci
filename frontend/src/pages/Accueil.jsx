@@ -1,4 +1,6 @@
 import React from "react";
+import BarChart from "../components/charts/BarChart";
+import CountUp from "../components/CountUp";
 
 function Accueil({ statistiques, conseilsCount, loading, user, onNavigate }) {
   const resolvedRate = statistiques.total_signalements
@@ -49,11 +51,29 @@ function Accueil({ statistiques, conseilsCount, loading, user, onNavigate }) {
       </section>
 
       <section className="impact-strip" aria-label="Impact EcoSignal CI">
-        <div><strong>{loading ? "—" : statistiques.total_signalements}</strong><span>signalements reçus</span></div>
-        <div><strong>{loading ? "—" : statistiques.resolus}</strong><span>situations résolues</span></div>
+        <div><strong>{loading ? "—" : <CountUp value={statistiques.total_signalements} />}</strong><span>signalements reçus</span></div>
+        <div><strong>{loading ? "—" : <CountUp value={statistiques.resolus} />}</strong><span>situations résolues</span></div>
         <div><strong>{loading ? "—" : `${resolvedRate}%`}</strong><span>de résolution</span></div>
-        <div><strong>{loading ? "—" : conseilsCount}</strong><span>conseils pratiques</span></div>
+        <div><strong>{loading ? "—" : <CountUp value={conseilsCount} />}</strong><span>conseils pratiques</span></div>
       </section>
+
+      {!loading && statistiques.par_commune?.length > 0 && (
+        <section className="section">
+          <div className="section-heading">
+            <p className="eyebrow">Transparence des données</p>
+            <h2>Les communes les plus actives</h2>
+            <p>Le nombre de signalements reçus, commune par commune, mis à jour en continu.</p>
+          </div>
+          <div className="chart-card content-panel">
+            <BarChart
+              data={statistiques.par_commune
+                .slice(0, 5)
+                .map((item) => ({ label: item.commune, total: item.total }))}
+              caption="Nombre de signalements par commune"
+            />
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <div className="section-heading">

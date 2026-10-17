@@ -23,8 +23,8 @@ class EcoSignalApiTest extends TestCase
 
     public function test_statistiques_accessibles(): void
     {
-        Signalement::factory()->create(['statut' => 'en_attente']);
-        Signalement::factory()->create(['statut' => 'resolu']);
+        Signalement::factory()->create(['statut' => 'en_attente', 'categorie' => 'plastique']);
+        Signalement::factory()->create(['statut' => 'resolu', 'categorie' => 'organique']);
 
         $response = $this->getJson('/api/statistiques');
 
@@ -35,7 +35,39 @@ class EcoSignalApiTest extends TestCase
             'en_cours',
             'resolus',
             'par_commune',
+            'par_categorie',
+            'evolution_mensuelle' => [
+                '*' => ['mois', 'label', 'total'],
+            ],
         ]);
         $response->assertJsonPath('total_signalements', 2);
+        $response->assertJsonCount(6, 'evolution_mensuelle');
+    }
+
+    public function test_statistiques_indicateurs_impact(): void
+    {
+        $resolu = Signalement::factory()->create(['statut' => 'resolu']);
+        $resolu->timestamps = false;
+        $resolu->created_at = now()->subDays(4);
+        $resolu->updated_at = now();
+        $resolu->save();
+        Signalement::factory()->create(['statut' => 'en_attente']);
+
+        $response = $this->getJson('/api/statistiques');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('taux_resolution', 50)
+            ->assertJsonPath('delai_moyen_resolution_jours', 4)
+            ->assertJsonPath('collectes_terminees', 0);
+    }
+
+    public function test_statistiques_sans_signalement_resolu(): void
+    {
+        Signalement::factory()->create(['statut' => 'en_attente']);
+
+        $this->getJson('/api/statistiques')
+            ->assertStatus(200)
+            ->assertJsonPath('taux_resolution', 0)
+            ->assertJsonPath('delai_moyen_resolution_jours', null);
     }
 }

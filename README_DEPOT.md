@@ -7,7 +7,7 @@ EcoSignal CI est une application web de signalement et de suivi des dépôts de 
 ### Citoyen
 
 - création d’un compte et connexion sécurisée ;
-- création d’un signalement avec commune, catégorie, description, photo et position facultatives ;
+- création d’un signalement (13 communes d’Abidjan et principales villes de l’intérieur) avec catégorie, description, photo et position facultatives ;
 - consultation exclusive de ses propres signalements ;
 - suivi du statut et de la collecte planifiée ;
 - consultation de ses notifications ;
@@ -20,7 +20,7 @@ EcoSignal CI est une application web de signalement et de suivi des dépôts de 
 - suppression d’un signalement ;
 - planification et gestion des collectes ;
 - création de conseils écologiques ;
-- consultation des statistiques globales.
+- consultation des statistiques globales et des indicateurs d’impact (taux de résolution, délai moyen de traitement, collectes réalisées).
 
 ## Architecture
 

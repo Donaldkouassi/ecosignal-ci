@@ -28,6 +28,48 @@ class ConseilSeeder extends Seeder
                 'categorie' => 'Salubrité urbaine',
                 'image_path' => null,
             ],
+            [
+                'titre' => 'Nettoyer les abords de son domicile',
+                'contenu' => 'Balayez et entretenez régulièrement le trottoir et le caniveau devant chez vous : cela limite l’accumulation de déchets et la stagnation des eaux usées.',
+                'categorie' => 'Salubrité urbaine',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Les déchets, un risque pour la santé',
+                'contenu' => 'Les ordures qui s’accumulent attirent moustiques, rats et insectes et favorisent la propagation du paludisme, du choléra et d’autres maladies. Un dépôt signalé rapidement, c’est un risque sanitaire évité.',
+                'categorie' => 'Santé publique',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Ne brûlez jamais vos déchets',
+                'contenu' => 'Brûler les ordures à l’air libre dégage des fumées toxiques dangereuses pour les voies respiratoires, en particulier pour les enfants et les personnes âgées du voisinage.',
+                'categorie' => 'Santé publique',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Déchets et inondations : un lien direct',
+                'contenu' => 'Les ordures jetées dans les caniveaux bouchent les canalisations et aggravent les inondations pendant la saison des pluies. Garder les caniveaux dégagés protège tout le quartier.',
+                'categorie' => 'Santé publique',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Signalez, ne détournez pas le regard',
+                'contenu' => 'Face à un dépôt sauvage, un signalement pris en quelques minutes permet aux équipes de collecte d’intervenir avant que la situation ne s’aggrave.',
+                'categorie' => 'Action citoyenne',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Organisez un nettoyage de quartier',
+                'contenu' => 'Mobilisez vos voisins pour une opération de salubrité collective : à plusieurs, le geste citoyen transforme durablement un quartier.',
+                'categorie' => 'Action citoyenne',
+                'image_path' => null,
+            ],
+            [
+                'titre' => 'Sensibilisez votre entourage',
+                'contenu' => 'Parlez du tri des déchets et du bon usage des points de collecte autour de vous : l’exemple individuel encourage les habitudes collectives.',
+                'categorie' => 'Action citoyenne',
+                'image_path' => null,
+            ],
         ];
 
         foreach ($conseils as $conseil) {

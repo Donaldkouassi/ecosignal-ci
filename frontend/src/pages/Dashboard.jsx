@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import StatusBar from "../components/charts/StatusBar";
 import SignalementCard from "../components/SignalementCard";
 
 function Dashboard({ signalements, loading, user }) {
@@ -20,12 +21,25 @@ function Dashboard({ signalements, loading, user }) {
         <h1>Mes signalements</h1>
         <p>{user.prenom}, suivez ici l’évolution de vos demandes.</p>
       </section>
-      <div className="dashboard-stats">
+      <div className="dashboard-stats stagger">
         <div className="stat-card"><strong>{signalements.length}</strong><span>Total affiché</span></div>
         <div className="stat-card"><strong>{count("en_attente")}</strong><span>En attente</span></div>
         <div className="stat-card"><strong>{count("en_cours")}</strong><span>En cours</span></div>
         <div className="stat-card"><strong>{count("resolu")}</strong><span>Résolus</span></div>
       </div>
+
+      {!loading && signalements.length > 0 && (
+        <section className="chart-card content-panel">
+          <h3>Répartition de mes signalements</h3>
+          <StatusBar
+            enAttente={count("en_attente")}
+            enCours={count("en_cours")}
+            resolus={count("resolu")}
+            caption="Répartition de mes signalements par statut"
+          />
+        </section>
+      )}
+
       <section className="content-panel" aria-labelledby="signalements-title">
         <div className="panel-heading">
           <div>

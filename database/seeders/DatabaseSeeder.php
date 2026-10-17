@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Collecte;
-use App\Models\Conseil;
-use App\Models\Notification;
 use App\Models\Signalement;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -34,19 +31,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::factory()->count(5)->create();
-
-        $signalements = Signalement::factory()
-            ->count(8)
-            ->create(['user_id' => $citoyen->id]);
-
-        Collecte::factory()->create([
-            'signalement_id' => $signalements->first()->id,
-            'statut' => 'planifiee',
-        ]);
-
-        Notification::factory()->count(3)->create(['user_id' => $citoyen->id]);
-        Conseil::factory()->count(5)->create();
+        // Ce bloc ne crée des données de démonstration qu'une seule fois : le
+        // conteneur relance ce seeder à chaque démarrage (le plan gratuit de
+        // Render ne permet pas de lancer une commande ponctuelle via un shell),
+        // il ne doit donc pas dupliquer les signalements à chaque redémarrage.
+        if (Signalement::count() === 0) {
+            $this->call(DemoSeeder::class);
+        }
 
         $this->call(ConseilSeeder::class);
     }

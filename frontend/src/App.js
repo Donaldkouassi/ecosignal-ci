@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import Toast from "./components/Toast";
 import Accueil from "./pages/Accueil";
+import Carte from "./pages/Carte";
 import Conseils from "./pages/Conseils";
 import Dashboard from "./pages/Dashboard";
 import ListeSignalements from "./pages/ListeSignalements";
@@ -11,6 +13,8 @@ import Notifications from "./pages/Notifications";
 import NouveauSignalement from "./pages/NouveauSignalement";
 import Register from "./pages/Register";
 import { apiRequest, firstValidationError } from "./services/api";
+
+const NOTIFICATIONS_POLL_MS = 25000;
 
 const emptyStats = {
   total_signalements: 0,
@@ -40,6 +44,12 @@ function App() {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [publicLoading, setPublicLoading] = useState(true);
   const [globalMessage, setGlobalMessage] = useState("");
+  const [toasts, setToasts] = useState([]);
+  const lastNotificationIdRef = useRef(null);
+
+  const dismissToast = useCallback((id) => {
+    setToasts((current) => current.filter((toast) => toast.id !== id));
+  }, []);
 
   const clearSession = useCallback((nextPage = "connexion") => {
     localStorage.removeItem("ecosignal_token");
@@ -85,26 +95,42 @@ function App() {
     }
   }, [clearSession, user]);
 
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async ({ background = false } = {}) => {
     if (!user) {
       setNotifications([]);
       setUnreadCount(0);
+      lastNotificationIdRef.current = null;
       return;
     }
 
-    setNotificationsLoading(true);
+    if (!background) setNotificationsLoading(true);
     try {
       const [notificationResponse, countResponse] = await Promise.all([
         apiRequest("/notifications"),
         apiRequest("/notifications/non-lues"),
       ]);
-      setNotifications(notificationResponse.data || []);
+      const list = notificationResponse.data || [];
+      setNotifications(list);
       setUnreadCount(countResponse.unread_count || 0);
+
+      if (list.length > 0) {
+        const maxId = Math.max(...list.map((item) => item.id));
+        if (lastNotificationIdRef.current !== null) {
+          const nouvelles = list.filter((item) => item.id > lastNotificationIdRef.current);
+          if (nouvelles.length > 0) {
+            setToasts((current) => [
+              ...current,
+              ...nouvelles.map((item) => ({ id: item.id, titre: item.titre, message: item.message })),
+            ]);
+          }
+        }
+        lastNotificationIdRef.current = maxId;
+      }
     } catch (error) {
-      setGlobalMessage(firstValidationError(error));
+      if (!background) setGlobalMessage(firstValidationError(error));
       if (error.status === 401) clearSession();
     } finally {
-      setNotificationsLoading(false);
+      if (!background) setNotificationsLoading(false);
     }
   }, [clearSession, user]);
 
@@ -115,7 +141,21 @@ function App() {
   useEffect(() => {
     loadSignalements();
     loadNotifications();
-  }, [loadNotifications, loadSignalements]);
+
+    if (!user) return undefined;
+
+    const poll = () => {
+      if (document.visibilityState === "visible") loadNotifications({ background: true });
+    };
+
+    const interval = window.setInterval(poll, NOTIFICATIONS_POLL_MS);
+    document.addEventListener("visibilitychange", poll);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", poll);
+    };
+  }, [loadNotifications, loadSignalements, user]);
 
   function handleAuthenticated(authenticatedUser, token) {
     localStorage.setItem("ecosignal_token", token);
@@ -138,7 +178,7 @@ function App() {
   function navigate(nextPage) {
     setGlobalMessage("");
 
-    if (["signaler", "dashboard", "notifications", "admin"].includes(nextPage) && !user) {
+    if (["signaler", "dashboard", "notifications", "carte", "admin"].includes(nextPage) && !user) {
       setPage("connexion");
       return;
     }
@@ -194,6 +234,47 @@ function App() {
     }
   }
 
+  async function createConseil(payload) {
+    try {
+      await apiRequest("/conseils", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      setGlobalMessage("Le conseil a été publié avec succès.");
+      await loadPublicData();
+      return true;
+    } catch (error) {
+      setGlobalMessage(firstValidationError(error));
+      return false;
+    }
+  }
+
+  async function updateConseil(id, payload) {
+    try {
+      await apiRequest(`/conseils/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      setGlobalMessage("Le conseil a été mis à jour.");
+      await loadPublicData();
+      return true;
+    } catch (error) {
+      setGlobalMessage(firstValidationError(error));
+      return false;
+    }
+  }
+
+  async function deleteConseil(id) {
+    if (!window.confirm("Voulez-vous vraiment supprimer ce conseil ?")) return;
+
+    try {
+      await apiRequest(`/conseils/${id}`, { method: "DELETE" });
+      await loadPublicData();
+    } catch (error) {
+      setGlobalMessage(firstValidationError(error));
+    }
+  }
+
   async function markNotificationAsRead(id) {
     try {
       await apiRequest(`/notifications/${id}/lue`, { method: "PATCH" });
@@ -236,6 +317,9 @@ function App() {
     case "conseils":
       content = <Conseils conseils={conseils} />;
       break;
+    case "carte":
+      content = <Carte signalements={signalements} loading={loading} />;
+      break;
     case "admin":
       content = (
         <ListeSignalements
@@ -245,6 +329,10 @@ function App() {
           onStatusChange={updateStatus}
           onDelete={deleteSignalement}
           onPlanCollecte={planCollecte}
+          conseils={conseils}
+          onCreateConseil={createConseil}
+          onUpdateConseil={updateConseil}
+          onDeleteConseil={deleteConseil}
         />
       );
       break;
@@ -278,6 +366,7 @@ function App() {
       )}
       <div id="main-content">{content}</div>
       <Footer />
+      <Toast toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }
