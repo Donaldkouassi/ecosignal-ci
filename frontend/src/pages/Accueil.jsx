@@ -78,8 +78,8 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
           <div className="home-hero-copy">
             <h1>Ville propre, commune propre.</h1>
             <p className="home-lead">
-              Un dépôt sauvage dans votre rue&nbsp;? Signalez-le en une minute avec une photo et sa position.
-              Les équipes de collecte de votre commune le reçoivent, et vous êtes prévenu jusqu'à ce que la rue soit propre.
+              Des déchets abandonnés dans votre rue&nbsp;? Signalez-les en une minute, avec une photo et leur position.
+              Les équipes de collecte de votre commune sont prévenues, et vous êtes informé jusqu'à ce que la rue soit propre.
             </p>
             <div className="home-actions">
               <button className="signal-button" onClick={signaler}>Signaler un dépôt</button>

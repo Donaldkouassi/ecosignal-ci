@@ -23,8 +23,8 @@ class ConseilSeeder extends Seeder
                 'image_path' => null,
             ],
             [
-                'titre' => 'Éviter les dépôts sauvages',
-                'contenu' => 'Ne déposez pas les ordures dans les rues ou les caniveaux. Utilisez les points de collecte prévus.',
+                'titre' => 'Déposer ses déchets aux bons endroits',
+                'contenu' => 'Gardez les rues et les caniveaux dégagés : déposez vos déchets aux points de collecte prévus.',
                 'categorie' => 'Salubrité urbaine',
                 'image_path' => null,
             ],
@@ -54,7 +54,7 @@ class ConseilSeeder extends Seeder
             ],
             [
                 'titre' => 'Signalez, ne détournez pas le regard',
-                'contenu' => 'Face à un dépôt sauvage, un signalement pris en quelques minutes permet aux équipes de collecte d’intervenir avant que la situation ne s’aggrave.',
+                'contenu' => 'Face à un tas de déchets abandonné, un signalement fait en quelques minutes permet aux équipes de collecte d’intervenir avant que la situation ne s’aggrave.',
                 'categorie' => 'Action citoyenne',
                 'image_path' => null,
             ],
@@ -71,6 +71,15 @@ class ConseilSeeder extends Seeder
                 'image_path' => null,
             ],
         ];
+
+        // Mise à jour des formulations des premières versions (une seule fois, sans doublon).
+        Conseil::where('titre', 'Éviter les dépôts sauvages')->update([
+            'titre' => 'Déposer ses déchets aux bons endroits',
+            'contenu' => 'Gardez les rues et les caniveaux dégagés : déposez vos déchets aux points de collecte prévus.',
+        ]);
+        Conseil::where('titre', 'Signalez, ne détournez pas le regard')
+            ->where('contenu', 'like', 'Face à un dépôt sauvage%')
+            ->update(['contenu' => 'Face à un tas de déchets abandonné, un signalement fait en quelques minutes permet aux équipes de collecte d’intervenir avant que la situation ne s’aggrave.']);
 
         foreach ($conseils as $conseil) {
             Conseil::firstOrCreate(

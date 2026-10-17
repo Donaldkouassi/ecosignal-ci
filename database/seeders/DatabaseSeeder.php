@@ -59,6 +59,17 @@ class DatabaseSeeder extends Seeder
             $this->call(DemoSeeder::class);
         }
 
+        // Formulations plus respectueuses pour les données de démonstration déjà installées.
+        foreach ([
+            "Dépôt sauvage d'ordures ménagères au carrefour Samaké, déborde sur la chaussée." => 'Tas de déchets ménagers au carrefour Samaké, qui déborde sur la chaussée.',
+            "Dépôt sauvage à l'entrée d'un chantier à Angré, attire les rongeurs." => "Déchets accumulés à l'entrée d'un chantier à Angré, attirent les rongeurs.",
+            'Dépôt sauvage grandissant derrière le marché de Wassakara.' => 'Tas de déchets qui grandit derrière le marché de Wassakara.',
+            'Dépôt sauvage près du terminus des bus 11, odeurs et moustiques.' => 'Déchets accumulés près du terminus des bus 11, odeurs et moustiques.',
+            "Dépôt sauvage près de l'arrêt de bus Anoumabo." => "Déchets laissés près de l'arrêt de bus Anoumabo.",
+        ] as $ancien => $nouveau) {
+            Signalement::where('description', $ancien)->update(['description' => $nouveau]);
+        }
+
         $this->call(ConseilSeeder::class);
     }
 }
