@@ -97,6 +97,12 @@ class StatistiqueController extends Controller
             ->groupBy(fn ($signalement) => $signalement->created_at->format('Y-m'))
             ->map->count();
 
+        $collectesParMois = Collecte::where('statut', 'terminee')
+            ->where('updated_at', '>=', $debut)
+            ->get(['updated_at'])
+            ->groupBy(fn ($collecte) => $collecte->updated_at->format('Y-m'))
+            ->map->count();
+
         $moisAbreges = [1 => 'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
         $mois = collect(range(0, 5))->map(fn ($offset) => Carbon::now()->startOfMonth()->subMonths(5 - $offset));
 
@@ -104,6 +110,7 @@ class StatistiqueController extends Controller
             'mois' => $date->format('Y-m'),
             'label' => $moisAbreges[(int) $date->format('n')].' '.$date->format('y'),
             'total' => $comptesParMois->get($date->format('Y-m'), 0),
+            'collectes' => $collectesParMois->get($date->format('Y-m'), 0),
         ])->values()->all();
     }
 }
