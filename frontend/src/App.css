@@ -2730,8 +2730,14 @@ textarea:focus {
   margin: 14px 0 0;
   padding: 0;
   list-style: none;
-  max-height: 340px;
-  overflow-y: auto;
+}
+
+.commune-list .is-extra {
+  display: none;
+}
+
+.more-communes {
+  margin-top: 12px;
 }
 
 .commune-button {
@@ -3161,4 +3167,201 @@ textarea:focus {
 /* Fond de carte adouci pour laisser ressortir les points */
 .public-map .leaflet-tile-pane {
   filter: saturate(0.55) contrast(0.95) brightness(1.03);
+}
+
+/* =====================================================================
+   Téléphone : priorité au pouce et à la lecture
+   ===================================================================== */
+.mobile-cta {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  body {
+    font-size: 16px;
+  }
+
+  .home-hero {
+    min-height: auto;
+  }
+
+  .home-hero-inner {
+    padding: 72px 0 28px;
+    gap: 20px;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(2.4rem, 11vw, 3.1rem);
+  }
+
+  .home-lead {
+    font-size: 1.02rem;
+  }
+
+  .home-actions .signal-button {
+    width: 100%;
+  }
+
+  .home-actions .hero-link {
+    padding: 6px 0;
+  }
+
+  .live-card {
+    max-width: none;
+    padding: 14px 16px;
+  }
+
+  /* Chiffres : trois blocs compacts côte à côte */
+  .home-figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 28px var(--gutter);
+  }
+
+  .home-figures .figure,
+  .home-figures .figure:first-child {
+    padding: 0;
+    border-left: 0;
+  }
+
+  .home-figures strong {
+    font-size: clamp(1.45rem, 7vw, 2rem);
+  }
+
+  .home-figures span {
+    margin-top: 6px;
+    font-size: 0.82rem;
+  }
+
+  .home-section {
+    margin: 48px auto;
+  }
+
+  /* Explorateur : filtres et communes en rangées défilantes, carte au centre */
+  .explorer-body {
+    margin-top: 20px;
+    gap: 16px;
+  }
+
+  .status-toggles,
+  .commune-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+  }
+
+  .status-toggles::-webkit-scrollbar,
+  .commune-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .status-toggle {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 8px 14px;
+  }
+
+  .commune-list {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .commune-list .is-extra {
+    display: list-item;
+    list-style: none;
+  }
+
+  .commune-list li {
+    flex-shrink: 0;
+  }
+
+  .commune-button {
+    width: auto;
+    min-height: 44px;
+    padding: 8px 14px;
+    grid-template-columns: auto auto;
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  .commune-bar {
+    display: none;
+  }
+
+  .commune-count {
+    min-width: 22px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--brume);
+    color: var(--lagune);
+    font-size: 0.82rem;
+    text-align: center;
+  }
+
+  .commune-button[aria-pressed="true"] .commune-count {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  .more-communes,
+  .commune-legend {
+    display: none;
+  }
+
+  .commune-detail {
+    margin-top: 14px;
+    padding: 14px 16px;
+  }
+
+  .public-map {
+    height: 62vh;
+    min-height: 320px;
+    max-height: 520px;
+    border-radius: var(--radius-md);
+  }
+
+  .home-closing {
+    padding-bottom: 96px;
+  }
+
+  /* Bouton « Signaler » toujours à portée de pouce */
+  .mobile-cta {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%);
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .mobile-cta.is-visible {
+    transform: none;
+  }
+
+  .mobile-cta .signal-button {
+    width: 100%;
+  }
+
+  #main-content:has(.home) + .footer {
+    padding-bottom: 90px;
+  }
+}
+
+/* Empêche les rangées défilantes d'élargir la colonne (et la page) sur mobile */
+.explorer-panel,
+.explorer-map {
+  min-width: 0;
+}
+
+.home {
+  overflow-x: clip;
 }

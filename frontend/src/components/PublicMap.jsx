@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 
 const ABIDJAN = [5.345, -4.02];
+const TACTILE = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 export const STATUTS = {
   en_attente: { label: "À traiter", className: "pin-attente" },
@@ -64,7 +65,15 @@ function PublicMap({ points, visibleStatuts, commune, onSelectCommune, height })
 
   return (
     <div className="public-map" style={height ? { height } : undefined}>
-      <MapContainer center={ABIDJAN} zoom={12} scrollWheelZoom={false} attributionControl>
+      {/* Sur écran tactile, un doigt fait défiler la page : la carte se déplace avec deux doigts ou les boutons + et −. */}
+      <MapContainer
+        center={ABIDJAN}
+        zoom={12}
+        scrollWheelZoom={false}
+        dragging={!TACTILE}
+        touchZoom
+        attributionControl
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"

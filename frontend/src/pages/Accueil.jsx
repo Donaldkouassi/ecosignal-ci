@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import PublicMap, { CATEGORIES, STATUTS } from "../components/PublicMap";
 import { apiRequest } from "../services/api";
 
@@ -29,6 +30,19 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
   const [carteIndisponible, setCarteIndisponible] = useState(false);
   const [commune, setCommune] = useState(null);
   const [visibleStatuts, setVisibleStatuts] = useState(Object.keys(STATUTS));
+  const [toutesCommunes, setToutesCommunes] = useState(false);
+  const LIMITE_COMMUNES = 6;
+  const actionsRef = useRef(null);
+  const [actionsHorsEcran, setActionsHorsEcran] = useState(false);
+
+  // Le bouton fixe en bas d'écran (mobile) n'apparaît qu'une fois celui du bandeau dépassé.
+  useEffect(() => {
+    const node = actionsRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return undefined;
+    const observer = new IntersectionObserver(([entry]) => setActionsHorsEcran(!entry.isIntersecting));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -81,7 +95,7 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
               Des déchets abandonnés dans votre rue&nbsp;? Signalez-les en une minute, avec une photo et leur position.
               Les équipes de collecte de votre commune sont prévenues, et vous êtes informé jusqu'à ce que la rue soit propre.
             </p>
-            <div className="home-actions">
+            <div className="home-actions" ref={actionsRef}>
               <button className="signal-button" onClick={signaler}>Signaler un dépôt</button>
               <a className="hero-link" href="#carte">Explorer la carte des dépôts</a>
             </div>
@@ -163,8 +177,8 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
             </div>
 
             <ul className="commune-list" aria-label="Communes">
-              {communes.map((c) => (
-                <li key={c.nom}>
+              {communes.map((c, index) => (
+                <li key={c.nom} className={!toutesCommunes && index >= LIMITE_COMMUNES && commune !== c.nom ? "is-extra" : undefined}>
                   <button
                     type="button"
                     className="commune-button"
@@ -180,6 +194,11 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
                 </li>
               ))}
             </ul>
+            {communes.length > LIMITE_COMMUNES && (
+              <button type="button" className="text-link more-communes" onClick={() => setToutesCommunes((v) => !v)}>
+                {toutesCommunes ? "Afficher moins de communes" : `Voir les ${communes.length - LIMITE_COMMUNES} autres communes`}
+              </button>
+            )}
             {communes.length > 0 && (
               <p className="commune-legend">La barre verte indique la part des dépôts déjà collectés.</p>
             )}
@@ -216,6 +235,13 @@ function Accueil({ statistiques, loading, user, onNavigate }) {
           </li>
         </ol>
       </section>
+
+      {createPortal(
+        <div className={`mobile-cta${actionsHorsEcran ? " is-visible" : ""}`} aria-hidden={!actionsHorsEcran}>
+          <button className="signal-button" onClick={signaler} tabIndex={actionsHorsEcran ? 0 : -1}>Signaler un dépôt</button>
+        </div>,
+        document.body
+      )}
 
       <section className="home-closing">
         <h2>Vous voyez un dépôt en ce moment&nbsp;?</h2>
