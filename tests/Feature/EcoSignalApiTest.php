@@ -82,4 +82,23 @@ class EcoSignalApiTest extends TestCase
         $this->assertSame(['id', 'latitude', 'longitude', 'statut', 'categorie', 'commune'], array_keys($response->json()[0]));
         $this->assertStringNotContainsString('Texte privé', $response->getContent());
     }
+
+    public function test_delai_base_sur_la_fin_de_collecte(): void
+    {
+        $signalement = Signalement::factory()->create(['statut' => 'resolu']);
+        $signalement->timestamps = false;
+        $signalement->created_at = now()->subDays(30);
+        $signalement->updated_at = now(); // modifié bien après la collecte
+        $signalement->save();
+
+        $collecte = \App\Models\Collecte::factory()->create([
+            'signalement_id' => $signalement->id,
+            'statut' => 'terminee',
+        ]);
+        $collecte->timestamps = false;
+        $collecte->updated_at = now()->subDays(27);
+        $collecte->save();
+
+        $this->getJson('/api/statistiques')->assertJsonPath('delai_moyen_resolution_jours', 3);
+    }
 }

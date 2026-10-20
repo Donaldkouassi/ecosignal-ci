@@ -12,7 +12,7 @@ function Footer() {
             <p>Un service citoyen pour des quartiers propres, en Côte d'Ivoire.</p>
           </div>
         </div>
-        <p className="footer-meta">Fonds de carte OpenStreetMap et CARTO.</p>
+        <p className="footer-meta">Fond de carte © les contributeurs OpenStreetMap.</p>
       </div>
     </footer>
   );

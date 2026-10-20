@@ -71,9 +71,18 @@ class StatistiqueController extends Controller
      */
     private function delaiMoyenResolution(): ?float
     {
+        // La fin de la collecte (quand elle existe) date la résolution : elle ne bouge pas
+        // si le signalement est modifié plus tard (correction de texte, etc.).
         $delais = Signalement::where('statut', 'resolu')
-            ->get(['created_at', 'updated_at'])
-            ->map(fn ($signalement) => $signalement->created_at->diffInHours($signalement->updated_at) / 24);
+            ->with('collecte')
+            ->get()
+            ->map(function ($signalement) {
+                $fin = $signalement->collecte && $signalement->collecte->statut === 'terminee'
+                    ? $signalement->collecte->updated_at
+                    : $signalement->updated_at;
+
+                return $signalement->created_at->diffInHours($fin) / 24;
+            });
 
         return $delais->isEmpty() ? null : round($delais->avg(), 1);
     }

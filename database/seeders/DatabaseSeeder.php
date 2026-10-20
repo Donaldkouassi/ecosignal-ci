@@ -67,7 +67,8 @@ class DatabaseSeeder extends Seeder
             'Dépôt sauvage près du terminus des bus 11, odeurs et moustiques.' => 'Déchets accumulés près du terminus des bus 11, odeurs et moustiques.',
             "Dépôt sauvage près de l'arrêt de bus Anoumabo." => "Déchets laissés près de l'arrêt de bus Anoumabo.",
         ] as $ancien => $nouveau) {
-            Signalement::where('description', $ancien)->update(['description' => $nouveau]);
+            // toBase() : met à jour le texte sans toucher à la date de mise à jour.
+            Signalement::where('description', $ancien)->toBase()->update(['description' => $nouveau]);
         }
 
         $this->call(ConseilSeeder::class);

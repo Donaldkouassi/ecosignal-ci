@@ -1,36 +1,36 @@
 :root {
-  /* Palette « Lagune & propreté » */
-  --lagune: #0e4c5a;
-  --lagune-deep: #0a3640;
-  --lagune-soft: #3c8c9c;
-  --feuille: #2e9e5b;
+  /* Palette : le vert EcoSignal d'origine, blanc net, orange pour signaler */
+  --lagune: #087443;
+  --lagune-deep: #063d29;
+  --lagune-soft: #2f7fa0;
+  --feuille: #10a35a;
   --signal: #e8792b;
   --signal-strong: #c2541a;
-  --brume: #eef4f3;
+  --brume: #f0f7f2;
   --font: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
 
   /* Anciens noms conservés pour les composants existants */
-  --green-950: #0a3640;
-  --green-900: #0e4c5a;
-  --green-800: #0e4c5a;
-  --green-700: #1f6e7e;
-  --green-600: #2e9e5b;
-  --green-100: #dcefe4;
-  --green-50: #eef4f3;
-  --ink: #14262b;
-  --muted: #546a70;
-  --line: #d5e2e1;
+  --green-950: #063d29;
+  --green-900: #075d3d;
+  --green-800: #087443;
+  --green-700: #0a8a4b;
+  --green-600: #10a35a;
+  --green-100: #dcfce7;
+  --green-50: #f0f7f2;
+  --ink: #13243b;
+  --muted: #56665e;
+  --line: #d8e6dd;
   --surface: #ffffff;
   --canvas: #ffffff;
   --warning: #9a4c0e;
   --danger: #b42318;
-  --shadow-sm: 0 1px 2px rgba(10, 54, 64, 0.06);
-  --shadow-lg: 0 1px 3px rgba(10, 54, 64, 0.08);
+  --shadow-sm: 0 1px 2px rgba(6, 61, 41, 0.06);
+  --shadow-lg: 0 1px 3px rgba(6, 61, 41, 0.08);
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
-  --status-good: #2e9e5b;
-  --status-warning: #3c8c9c;
+  --status-good: #10a35a;
+  --status-warning: #2f7fa0;
   --status-serious: #e8792b;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -2428,7 +2428,7 @@ nav .login:hover {
 }
 
 .status.en_attente { background: #fdeee3; color: #9a3f0c; }
-.status.en_cours { background: #e3f0f2; color: #0e4c5a; }
+.status.en_cours { background: #e4f0f6; color: #1f5f7a; }
 .status.resolu { background: #e2f3e9; color: #1d6e3e; }
 
 .category-tag {
@@ -2461,7 +2461,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--lagune) !important;
-  box-shadow: 0 0 0 3px rgba(14, 76, 90, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.15) !important;
 }
 
 /* Graphiques */
@@ -2512,8 +2512,8 @@ textarea:focus {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(10, 54, 64, 0.82) 0%, rgba(10, 54, 64, 0.55) 42%, rgba(10, 54, 64, 0) 72%),
-    linear-gradient(0deg, rgba(10, 54, 64, 0.55) 0%, rgba(10, 54, 64, 0) 45%);
+    linear-gradient(90deg, rgba(6, 61, 41, 0.82) 0%, rgba(6, 61, 41, 0.55) 42%, rgba(6, 61, 41, 0) 72%),
+    linear-gradient(0deg, rgba(6, 61, 41, 0.55) 0%, rgba(6, 61, 41, 0) 45%);
 }
 
 @keyframes hero-settle {
@@ -2636,7 +2636,7 @@ textarea:focus {
 }
 
 .live-status.pin-attente { background: #fdeee3; color: #9a3f0c; }
-.live-status.pin-cours { background: #e3f0f2; color: var(--lagune); }
+.live-status.pin-cours { background: #e4f0f6; color: #1f5f7a; }
 .live-status.pin-resolu { background: #e2f3e9; color: #1d6e3e; }
 
 @keyframes live-in {
@@ -2816,7 +2816,7 @@ textarea:focus {
 
 .leaflet-marker-icon .pin-focus {
   transform: scale(1.35);
-  box-shadow: 0 0 0 3px rgba(14, 76, 90, 0.35);
+  box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.35);
 }
 
 /* Points de la carte : un seul moment d'animation, l'apparition des dépôts */
@@ -2826,7 +2826,7 @@ textarea:focus {
   height: 14px;
   border: 2.5px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 0 0 1px rgba(10, 54, 64, 0.25);
+  box-shadow: 0 0 0 1px rgba(6, 61, 41, 0.25);
 }
 
 .leaflet-marker-icon .pin {
@@ -3154,6 +3154,11 @@ textarea:focus {
 
 @media (max-width: 900px) {
   .home-hero::after {
-    background: linear-gradient(180deg, rgba(10, 54, 64, 0.55) 0%, rgba(10, 54, 64, 0.82) 55%, rgba(10, 54, 64, 0.9) 100%);
+    background: linear-gradient(180deg, rgba(6, 61, 41, 0.55) 0%, rgba(6, 61, 41, 0.82) 55%, rgba(6, 61, 41, 0.9) 100%);
   }
+}
+
+/* Fond de carte adouci pour laisser ressortir les points */
+.public-map .leaflet-tile-pane {
+  filter: saturate(0.55) contrast(0.95) brightness(1.03);
 }

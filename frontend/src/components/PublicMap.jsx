@@ -66,8 +66,8 @@ function PublicMap({ points, visibleStatuts, commune, onSelectCommune, height })
     <div className="public-map" style={height ? { height } : undefined}>
       <MapContainer center={ABIDJAN} zoom={12} scrollWheelZoom={false} attributionControl>
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Cadrage points={points} commune={commune} />
         {markers.map((point) => (
